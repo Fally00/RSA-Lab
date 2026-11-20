@@ -3,7 +3,7 @@
 > An offline RSA audit lab. It finds weak keys, **proves** they are broken by handing back the factors, shows step by step *why* each attack worked, and generates hardened keys that survive the same audit.
 
 Course project for **BS 208 – Elementary Number Theory** (Cyber Security, Section A2).
-Deadline: **before December 3**. Team of 7. See [`ROLES.md`](ROLES.md) for who builds what and when.
+Deadline: **before December 3**. Team of 7. See [`instructions.md`](Roles/Instructions.md) for who builds what and when.
 
 ---
 

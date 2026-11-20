@@ -10,6 +10,19 @@
 
 ---
 
+## Team Members
+
+-> See [Roles](Roles/) for each member role there is a markdown file to read
+- [Rayan](Roles/Rayan.md)
+- [Omar_Tarek](Roles/Omar_Tarek.md)
+- [Basouny](Roles/Basouny.md)
+- [Jomana](Roles/Jomana.md)
+- [Haneen](Roles/Haneen.md)
+- [Tamim](Roles/Tamim.md)
+- [Abdelrahman](Roles/Abdelrahaman.md)
+
+---
+
 ## Section 6.Project structure
 
 
