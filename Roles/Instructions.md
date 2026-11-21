@@ -13,14 +13,14 @@
 ## Team Members
 
 -> See [Roles](Roles/) for each member role there is a markdown file to read
-- [Rayan](Roles/Rayan.md)
-- [Omar_Tarek](Roles/Omar_Tarek.md)
-- [Basouny](Roles/Basouny.md)
-- [Jomana](Roles/Jomana.md)
-- [Haneen](Roles/Haneen.md)
-- [Tamim](Roles/Tamim.md)
-- [Abdelrahman](Roles/Abdelrahaman.md)
-
+- [Rayan](Rayan.md)
+- [Omar_Tarek](Omar_Tarek.md)
+- [Basouny](Basouny.md)
+- [Jomana](Jomana.md)
+- [Haneen](Haneen.md)
+- [Tamim](Tamim.md)
+- [Abdelrahman](Abdelrahaman.md)
+- [Remas](Remas.md)
 ---
 
 ## Section 6.Project structure
@@ -89,30 +89,31 @@ rsa-lab/
 │   ├── lcg_predictor.py        # W13: predict an LCG random generator from its outputs
 │   └── dsa_nonce.py            # W14: DSA nonce-reuse private key recovery
 │
-├── web/                        # Everything the browser sees (the whole frontend)         [Abdelrahamn]
+├── web/                        # Everything the browser sees (the whole frontend)     [Abdelrahman + Remas]
 │   ├── templates/              # HTML pages (Jinja, rendered by Flask)
-│   │   ├── base.html           # Shared layout: head, navbar, footer, script tags
-│   │   ├── index.html          # Landing page: what rsa-lab is + how it works
-│   │   ├── audit.html          # Main page: paste keys, run audit, results, timing view
-│   │   ├── keygen.html         # Generate a hardened key and audit it next to a weak one
-│   │   ├── toolkit.html        # Math toolkit: calculator with every step shown
+│   │   ├── audit.html          # Main page: paste keys, run audit, results, timing    [Abdelrahman]
+│   │   ├── base.html           # Shared layout: head, navbar, footer, script tags     [Abdelrahman]
+│   │   ├── index.html          # Landing page: what rsa-lab is + how it works         [  Remas    ]
+│   │   ├── keygen.html         # Generate a hardened key, audit it next to a weak one [  Remas    ]
+│   │   ├── toolkit.html        # Math toolkit: calculator with every step shown       [  Remas    ]
 │   │   └── partials/           # Small reusable HTML blocks
-│   │       ├── navbar.html
-│   │       ├── result_card.html    # One 🟢/🔴 verdict card
-│   │       └── explain_panel.html  # Step-by-step viewer for an attack's "steps" (Explain mode)
+│   │       ├── navbar.html                                                            [Abdelrahman]
+│   │       ├── result_card.html    # One verdict card (BROKEN / SAFE)                 [Abdelrahman]
+│   │       └── explain_panel.html  # Step-by-step viewer for an attack's "steps"      [Abdelrahman]
 │   └── static/                 # Files served as-is by Flask
 │       ├── css/
-│       │   ├── style.css       # Global theme (dark + light) and layout
-│       │   └── explain.css     # Styling for Explain mode panels and tables
+│       │   ├── style.css       # Global theme (dark + light, burgundy palette)        [Abdelrahman]
+│       │   ├── explain.css     # Styling for Explain mode panels and tables           [Abdelrahman]
+│       │   └── pages.css       # NEW: styles for Keygen, Toolkit and landing pages    [  Remas    ]
 │       ├── js/
-│       │   ├── api.js          # Shared helper for calling the /api endpoints
-│       │   ├── audit.js        # Sends keys to /api/audit, renders results
-│       │   ├── explain.js      # Builds the step-by-step trace view
-│       │   ├── keygen.js       # Keygen page logic
-│       │   ├── toolkit.js      # Toolkit page logic
-│       │   ├── charts.js       # Chart.js helpers (attack timing bars)
-│       │   └── vendor/         # Third-party libs (drop chart.min.js here)
-│       └── img/                # Logo, icons, poster images
+│       │   ├── api.js          # Shared helper for calling the /api endpoints         [Abdelrahman]
+│       │   ├── audit.js        # Sends keys to /api/audit, renders results            [Abdelrahman]
+│       │   ├── explain.js      # Builds the step-by-step trace view                   [Abdelrahman]
+│       │   ├── keygen.js       # Keygen page logic                                    [  Remas    ]
+│       │   ├── toolkit.js      # Toolkit page logic                                   [  Remas    ]
+│       │   ├── charts.js       # Chart.js helpers (attack timing bars)                [Abdelrahman]
+│       │   └── vendor/         # Third-party libs (drop chart.min.js here)            [Abdelrahman]
+│       └── img/                # Logo, icons, reference images, poster images         [  Remas    ]
 │
 └── docs/
     ├── mock_results.json       
