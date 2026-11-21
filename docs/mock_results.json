@@ -1,1 +1,4910 @@
-{}
+{
+  "schema_version": 1,
+  "note": "MOCK data. Real toy keys, real attack output, every break verified. All big integers are STRINGS (use BigInt in JS).",
+  "attack_registry": [
+    {
+      "attack": "trial_division",
+      "week": 3,
+      "batch": false
+    },
+    {
+      "attack": "fermat",
+      "week": 12,
+      "batch": false
+    },
+    {
+      "attack": "pollard_rho",
+      "week": 12,
+      "batch": false
+    },
+    {
+      "attack": "wiener",
+      "week": 5,
+      "batch": false
+    },
+    {
+      "attack": "phi_leak",
+      "week": 7,
+      "batch": false
+    },
+    {
+      "attack": "bad_modulus",
+      "week": 11,
+      "batch": false
+    },
+    {
+      "attack": "shared_prime",
+      "week": 2,
+      "batch": true
+    }
+  ],
+  "keys": [
+    {
+      "label": "key-1",
+      "note": "trial division: one tiny prime factor",
+      "n": "106090477",
+      "e": "65537",
+      "bits": 27,
+      "verdict": "BROKEN",
+      "results": [
+        {
+          "attack": "trial_division",
+          "week": 3,
+          "broken": true,
+          "factors": [
+            "1013",
+            "104729"
+          ],
+          "private_key": "11692977",
+          "steps": [
+            "Divide n by 2, then every odd d up to 100000. A hit means d | n (W1 divisibility, W3 primes).",
+            {
+              "table": {
+                "headers": [
+                  "d",
+                  "n mod d"
+                ],
+                "rows": [
+                  [
+                    "2",
+                    "1"
+                  ],
+                  [
+                    "3",
+                    "1"
+                  ],
+                  [
+                    "5",
+                    "2"
+                  ],
+                  [
+                    "7",
+                    "3"
+                  ],
+                  [
+                    "9",
+                    "7"
+                  ],
+                  [
+                    "1013",
+                    "0"
+                  ]
+                ]
+              }
+            },
+            "d = 1013 divides n after 507 candidates, so q = n / d.",
+            "n = 1013 x 104729"
+          ],
+          "time_ms": 2.516
+        },
+        {
+          "attack": "fermat",
+          "week": 12,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "If p and q are close, n = a^2 - b^2 with a = (p+q)/2 near sqrt(n). Try a = ceil(sqrt n), a+1, ... until a^2 - n is a perfect square (W12).",
+            {
+              "table": {
+                "headers": [
+                  "iter",
+                  "a",
+                  "a^2 - n",
+                  "square?"
+                ],
+                "rows": [
+                  [
+                    "1",
+                    "10301",
+                    "20124",
+                    "no"
+                  ],
+                  [
+                    "2",
+                    "10302",
+                    "40727",
+                    "no"
+                  ],
+                  [
+                    "3",
+                    "10303",
+                    "61332",
+                    "no"
+                  ],
+                  [
+                    "4",
+                    "10304",
+                    "81939",
+                    "no"
+                  ]
+                ]
+              }
+            },
+            "No square found in 10000 iterations: p and q are not close enough."
+          ],
+          "time_ms": 1.952
+        },
+        {
+          "attack": "pollard_rho",
+          "week": 12,
+          "broken": true,
+          "factors": [
+            "1013",
+            "104729"
+          ],
+          "private_key": "11692977",
+          "steps": [
+            "Walk x -> x^2 + c (mod n) with a tortoise and a hare. When the walks collide mod a hidden prime p, gcd(|x - y|, n) reveals p (W12, W10 cost ~ sqrt(p)).",
+            "c = 1",
+            {
+              "table": {
+                "headers": [
+                  "i",
+                  "x",
+                  "y",
+                  "gcd(|x-y|, n)"
+                ],
+                "rows": [
+                  [
+                    "1",
+                    "5",
+                    "26",
+                    "1"
+                  ],
+                  [
+                    "2",
+                    "26",
+                    "458330",
+                    "1"
+                  ],
+                  [
+                    "3",
+                    "677",
+                    "27335352",
+                    "1"
+                  ],
+                  [
+                    "4",
+                    "458330",
+                    "31135244",
+                    "1"
+                  ],
+                  [
+                    "17",
+                    "88168341",
+                    "47863097",
+                    "1013"
+                  ]
+                ]
+              }
+            },
+            "gcd = 1013 is a proper factor after 17 iterations.",
+            "n = 1013 x 104729"
+          ],
+          "time_ms": 0.027
+        },
+        {
+          "attack": "wiener",
+          "week": 5,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "If d < n^(1/4)/3 then k/d is a convergent of the continued fraction of e/n. For each convergent k/d: phi = (e*d - 1)/k, then solve x^2 - (n - phi + 1)x + n = 0 (W5, W7).",
+            "Continued fraction of e/n starts [0, 1618, 1, 3, 1, 2, 2, 2, ...]",
+            {
+              "table": {
+                "headers": [
+                  "i",
+                  "k/d",
+                  "k | e*d-1 ?",
+                  "phi candidate",
+                  "disc square?"
+                ],
+                "rows": [
+                  [
+                    "1",
+                    "1/1618",
+                    "yes",
+                    "106038865",
+                    "no"
+                  ],
+                  [
+                    "2",
+                    "1/1619",
+                    "yes",
+                    "106104402",
+                    "no"
+                  ],
+                  [
+                    "3",
+                    "4/6475",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "4",
+                    "5/8094",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "5",
+                    "14/22663",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "6",
+                    "33/53420",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "7",
+                    "80/129503",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "8",
+                    "1313/2125468",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "9",
+                    "4019/6505907",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "10",
+                    "13370/21643189",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "11",
+                    "17389/28149096",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "12",
+                    "65537/106090477",
+                    "no",
+                    "-",
+                    "-"
+                  ]
+                ]
+              }
+            },
+            "No convergent gives a valid phi. d is not small enough for Wiener."
+          ],
+          "time_ms": 0.034
+        },
+        {
+          "attack": "phi_leak",
+          "week": 7,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "phi(n) = n - (p+q) + 1, so p+q = s is close to 2*sqrt(n) when p, q are close. Guess s upward from ceil(2*sqrt(n)); a valid s makes s^2 - 4n a perfect square (W6/W7).",
+            {
+              "table": {
+                "headers": [
+                  "k",
+                  "s guess",
+                  "phi guess",
+                  "s^2-4n square?"
+                ],
+                "rows": [
+                  [
+                    "0",
+                    "20601",
+                    "106069877",
+                    "no"
+                  ],
+                  [
+                    "1",
+                    "20602",
+                    "106069876",
+                    "no"
+                  ],
+                  [
+                    "2",
+                    "20603",
+                    "106069875",
+                    "no"
+                  ],
+                  [
+                    "3",
+                    "20604",
+                    "106069874",
+                    "no"
+                  ]
+                ]
+              }
+            },
+            "phi(n) is not within 5000 guesses of n - 2*sqrt(n). No leak."
+          ],
+          "time_ms": 1.462
+        },
+        {
+          "attack": "bad_modulus",
+          "week": 11,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "A good modulus is a product of two distinct large odd primes. Check the cheap structural flaws first (W11 primality).",
+            "isqrt(n) = 10300; 10300^2 != n.",
+            {
+              "table": {
+                "headers": [
+                  "Miller-Rabin base",
+                  "result"
+                ],
+                "rows": [
+                  [
+                    "2",
+                    "composite witness"
+                  ],
+                  [
+                    "3",
+                    "composite witness"
+                  ],
+                  [
+                    "5",
+                    "composite witness"
+                  ],
+                  [
+                    "7",
+                    "composite witness"
+                  ],
+                  [
+                    "11",
+                    "composite witness"
+                  ],
+                  [
+                    "13",
+                    "composite witness"
+                  ]
+                ]
+              }
+            },
+            "n is composite with no cheap structural flaw (not even, not a perfect square)."
+          ],
+          "time_ms": 0.027
+        },
+        {
+          "attack": "shared_prime",
+          "week": 2,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "Compute gcd(n_i, n_j) for every pair (W2 Euclid). A gcd strictly between 1 and n is a shared prime, which factors both keys instantly.",
+            {
+              "table": {
+                "headers": [
+                  "pair",
+                  "gcd"
+                ],
+                "rows": [
+                  [
+                    "key-1 x key-2",
+                    "1"
+                  ],
+                  [
+                    "key-1 x key-3",
+                    "1"
+                  ],
+                  [
+                    "key-1 x key-4",
+                    "1"
+                  ],
+                  [
+                    "key-1 x key-5",
+                    "1"
+                  ],
+                  [
+                    "key-1 x key-6",
+                    "1"
+                  ],
+                  [
+                    "key-1 x key-7",
+                    "1"
+                  ],
+                  [
+                    "key-1 x key-8",
+                    "1"
+                  ],
+                  [
+                    "key-1 x key-9",
+                    "1"
+                  ]
+                ]
+              }
+            },
+            "All gcds are 1: this key shares no prime with the others in the batch."
+          ],
+          "time_ms": 0.003
+        }
+      ]
+    },
+    {
+      "label": "key-2",
+      "note": "Fermat + phi leak: two close primes",
+      "n": "1000000000582000000021177",
+      "e": "65537",
+      "bits": 80,
+      "verdict": "BROKEN",
+      "results": [
+        {
+          "attack": "trial_division",
+          "week": 3,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "Divide n by 2, then every odd d up to 100000. A hit means d | n (W1 divisibility, W3 primes).",
+            {
+              "table": {
+                "headers": [
+                  "d",
+                  "n mod d"
+                ],
+                "rows": [
+                  [
+                    "2",
+                    "1"
+                  ],
+                  [
+                    "3",
+                    "1"
+                  ],
+                  [
+                    "5",
+                    "2"
+                  ],
+                  [
+                    "7",
+                    "4"
+                  ],
+                  [
+                    "9",
+                    "7"
+                  ]
+                ]
+              }
+            },
+            "No divisor up to 100000 (50000 candidates tried). Smallest prime factor is larger than that."
+          ],
+          "time_ms": 5.734
+        },
+        {
+          "attack": "fermat",
+          "week": 12,
+          "broken": true,
+          "factors": [
+            "1000000000039",
+            "1000000000543"
+          ],
+          "private_key": "163477628508283208979467",
+          "steps": [
+            "If p and q are close, n = a^2 - b^2 with a = (p+q)/2 near sqrt(n). Try a = ceil(sqrt n), a+1, ... until a^2 - n is a perfect square (W12).",
+            {
+              "table": {
+                "headers": [
+                  "iter",
+                  "a",
+                  "a^2 - n",
+                  "square?"
+                ],
+                "rows": [
+                  [
+                    "1",
+                    "1000000000291",
+                    "63504",
+                    "yes"
+                  ]
+                ]
+              }
+            },
+            "b = 252, so p = a - b, q = a + b.",
+            "n = 1000000000039 x 1000000000543"
+          ],
+          "time_ms": 0.018
+        },
+        {
+          "attack": "pollard_rho",
+          "week": 12,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "Walk x -> x^2 + c (mod n) with a tortoise and a hare. When the walks collide mod a hidden prime p, gcd(|x - y|, n) reveals p (W12, W10 cost ~ sqrt(p)).",
+            "No factor in 20000 iterations per attempt. Expected cost ~ sqrt(smallest prime), which is too big here."
+          ],
+          "time_ms": 58.299
+        },
+        {
+          "attack": "wiener",
+          "week": 5,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "If d < n^(1/4)/3 then k/d is a convergent of the continued fraction of e/n. For each convergent k/d: phi = (e*d - 1)/k, then solve x^2 - (n - phi + 1)x + n = 0 (W5, W7).",
+            "Continued fraction of e/n starts [0, 15258556244289485329, 4, 1, 1, 12, 1, 47, ...]",
+            {
+              "table": {
+                "headers": [
+                  "i",
+                  "k/d",
+                  "k | e*d-1 ?",
+                  "phi candidate",
+                  "disc square?"
+                ],
+                "rows": [
+                  [
+                    "1",
+                    "1/15258556244289485329",
+                    "yes",
+                    "1000000000582000000006672",
+                    "no"
+                  ],
+                  [
+                    "2",
+                    "4/61034224977157941317",
+                    "yes",
+                    "1000000000582000000023057",
+                    "no"
+                  ],
+                  [
+                    "3",
+                    "5/76292781221447426646",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "4",
+                    "9/137327006198605367963",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "5",
+                    "113/1724216855604711842202",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "6",
+                    "122/1861543861803317210165",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "7",
+                    "5847/89216778360360620719957",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "8",
+                    "5969/91078322222163937930122",
+                    "yes",
+                    "1000000000582000000021177",
+                    "no"
+                  ],
+                  [
+                    "9",
+                    "65537/1000000000582000000021177",
+                    "no",
+                    "-",
+                    "-"
+                  ]
+                ]
+              }
+            },
+            "No convergent gives a valid phi. d is not small enough for Wiener."
+          ],
+          "time_ms": 0.041
+        },
+        {
+          "attack": "phi_leak",
+          "week": 7,
+          "broken": true,
+          "factors": [
+            "1000000000039",
+            "1000000000543"
+          ],
+          "private_key": "163477628508283208979467",
+          "steps": [
+            "phi(n) = n - (p+q) + 1, so p+q = s is close to 2*sqrt(n) when p, q are close. Guess s upward from ceil(2*sqrt(n)); a valid s makes s^2 - 4n a perfect square (W6/W7).",
+            {
+              "table": {
+                "headers": [
+                  "k",
+                  "s guess",
+                  "phi guess",
+                  "s^2-4n square?"
+                ],
+                "rows": [
+                  [
+                    "0",
+                    "2000000000582",
+                    "1000000000580000000020596",
+                    "yes"
+                  ]
+                ]
+              }
+            },
+            "phi(n) = 1000000000580000000020596. Roots of x^2 - s*x + n are p and q.",
+            "n = 1000000000039 x 1000000000543"
+          ],
+          "time_ms": 0.025
+        },
+        {
+          "attack": "bad_modulus",
+          "week": 11,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "A good modulus is a product of two distinct large odd primes. Check the cheap structural flaws first (W11 primality).",
+            "isqrt(n) = 1000000000290; 1000000000290^2 != n.",
+            {
+              "table": {
+                "headers": [
+                  "Miller-Rabin base",
+                  "result"
+                ],
+                "rows": [
+                  [
+                    "2",
+                    "composite witness"
+                  ],
+                  [
+                    "3",
+                    "composite witness"
+                  ],
+                  [
+                    "5",
+                    "composite witness"
+                  ],
+                  [
+                    "7",
+                    "composite witness"
+                  ],
+                  [
+                    "11",
+                    "composite witness"
+                  ],
+                  [
+                    "13",
+                    "composite witness"
+                  ]
+                ]
+              }
+            },
+            "n is composite with no cheap structural flaw (not even, not a perfect square)."
+          ],
+          "time_ms": 0.103
+        },
+        {
+          "attack": "shared_prime",
+          "week": 2,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "Compute gcd(n_i, n_j) for every pair (W2 Euclid). A gcd strictly between 1 and n is a shared prime, which factors both keys instantly.",
+            {
+              "table": {
+                "headers": [
+                  "pair",
+                  "gcd"
+                ],
+                "rows": [
+                  [
+                    "key-2 x key-1",
+                    "1"
+                  ],
+                  [
+                    "key-2 x key-3",
+                    "1"
+                  ],
+                  [
+                    "key-2 x key-4",
+                    "1"
+                  ],
+                  [
+                    "key-2 x key-5",
+                    "1"
+                  ],
+                  [
+                    "key-2 x key-6",
+                    "1"
+                  ],
+                  [
+                    "key-2 x key-7",
+                    "1"
+                  ],
+                  [
+                    "key-2 x key-8",
+                    "1"
+                  ],
+                  [
+                    "key-2 x key-9",
+                    "1"
+                  ]
+                ]
+              }
+            },
+            "All gcds are 1: this key shares no prime with the others in the batch."
+          ],
+          "time_ms": 0.003
+        }
+      ]
+    },
+    {
+      "label": "key-3",
+      "note": "Pollard rho: one smallish prime (~3e6), one big",
+      "n": "21000119000027000153",
+      "e": "65537",
+      "bits": 65,
+      "verdict": "BROKEN",
+      "results": [
+        {
+          "attack": "trial_division",
+          "week": 3,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "Divide n by 2, then every odd d up to 100000. A hit means d | n (W1 divisibility, W3 primes).",
+            {
+              "table": {
+                "headers": [
+                  "d",
+                  "n mod d"
+                ],
+                "rows": [
+                  [
+                    "2",
+                    "1"
+                  ],
+                  [
+                    "3",
+                    "2"
+                  ],
+                  [
+                    "5",
+                    "3"
+                  ],
+                  [
+                    "7",
+                    "5"
+                  ],
+                  [
+                    "9",
+                    "5"
+                  ]
+                ]
+              }
+            },
+            "No divisor up to 100000 (50000 candidates tried). Smallest prime factor is larger than that."
+          ],
+          "time_ms": 5.556
+        },
+        {
+          "attack": "fermat",
+          "week": 12,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "If p and q are close, n = a^2 - b^2 with a = (p+q)/2 near sqrt(n). Try a = ceil(sqrt n), a+1, ... until a^2 - n is a perfect square (W12).",
+            {
+              "table": {
+                "headers": [
+                  "iter",
+                  "a",
+                  "a^2 - n",
+                  "square?"
+                ],
+                "rows": [
+                  [
+                    "1",
+                    "4582588679",
+                    "871964888",
+                    "no"
+                  ],
+                  [
+                    "2",
+                    "4582588680",
+                    "10037142247",
+                    "no"
+                  ],
+                  [
+                    "3",
+                    "4582588681",
+                    "19202319608",
+                    "no"
+                  ],
+                  [
+                    "4",
+                    "4582588682",
+                    "28367496971",
+                    "no"
+                  ]
+                ]
+              }
+            },
+            "No square found in 10000 iterations: p and q are not close enough."
+          ],
+          "time_ms": 2.251
+        },
+        {
+          "attack": "pollard_rho",
+          "week": 12,
+          "broken": true,
+          "factors": [
+            "3000017",
+            "7000000000009"
+          ],
+          "private_key": "2362901123062956497",
+          "steps": [
+            "Walk x -> x^2 + c (mod n) with a tortoise and a hare. When the walks collide mod a hidden prime p, gcd(|x - y|, n) reveals p (W12, W10 cost ~ sqrt(p)).",
+            "c = 1",
+            {
+              "table": {
+                "headers": [
+                  "i",
+                  "x",
+                  "y",
+                  "gcd(|x-y|, n)"
+                ],
+                "rows": [
+                  [
+                    "1",
+                    "5",
+                    "26",
+                    "1"
+                  ],
+                  [
+                    "2",
+                    "26",
+                    "458330",
+                    "1"
+                  ],
+                  [
+                    "3",
+                    "677",
+                    "6637726849448666349",
+                    "1"
+                  ],
+                  [
+                    "4",
+                    "458330",
+                    "10434956183275683497",
+                    "1"
+                  ],
+                  [
+                    "2260",
+                    "12951983853248266887",
+                    "2065456930801616184",
+                    "3000017"
+                  ]
+                ]
+              }
+            },
+            "gcd = 3000017 is a proper factor after 2260 iterations.",
+            "n = 3000017 x 7000000000009"
+          ],
+          "time_ms": 2.255
+        },
+        {
+          "attack": "wiener",
+          "week": 5,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "If d < n^(1/4)/3 then k/d is a convergent of the continued fraction of e/n. For each convergent k/d: phi = (e*d - 1)/k, then solve x^2 - (n - phi + 1)x + n = 0 (W5, W7).",
+            "Continued fraction of e/n starts [0, 320431496712193, 8, 1, 2, 1, 1, 1, ...]",
+            {
+              "table": {
+                "headers": [
+                  "i",
+                  "k/d",
+                  "k | e*d-1 ?",
+                  "phi candidate",
+                  "disc square?"
+                ],
+                "rows": [
+                  [
+                    "1",
+                    "1/320431496712193",
+                    "yes",
+                    "21000119000026992640",
+                    "no"
+                  ],
+                  [
+                    "2",
+                    "8/2563451973697545",
+                    "yes",
+                    "21000119000027000833",
+                    "no"
+                  ],
+                  [
+                    "3",
+                    "9/2883883470409738",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "4",
+                    "26/8331218914517021",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "5",
+                    "35/11215102384926759",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "6",
+                    "61/19546321299443780",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "7",
+                    "96/30761423684370539",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "8",
+                    "253/81069168668184858",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "9",
+                    "1614/517176435693479687",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "10",
+                    "1867/598245604361664545",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "11",
+                    "3481/1115422040055144232",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "12",
+                    "5348/1713667644416808777",
+                    "no",
+                    "-",
+                    "-"
+                  ]
+                ]
+              }
+            },
+            "No convergent gives a valid phi. d is not small enough for Wiener."
+          ],
+          "time_ms": 0.036
+        },
+        {
+          "attack": "phi_leak",
+          "week": 7,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "phi(n) = n - (p+q) + 1, so p+q = s is close to 2*sqrt(n) when p, q are close. Guess s upward from ceil(2*sqrt(n)); a valid s makes s^2 - 4n a perfect square (W6/W7).",
+            {
+              "table": {
+                "headers": [
+                  "k",
+                  "s guess",
+                  "phi guess",
+                  "s^2-4n square?"
+                ],
+                "rows": [
+                  [
+                    "0",
+                    "9165177358",
+                    "21000118990861822796",
+                    "no"
+                  ],
+                  [
+                    "1",
+                    "9165177359",
+                    "21000118990861822795",
+                    "no"
+                  ],
+                  [
+                    "2",
+                    "9165177360",
+                    "21000118990861822794",
+                    "no"
+                  ],
+                  [
+                    "3",
+                    "9165177361",
+                    "21000118990861822793",
+                    "no"
+                  ]
+                ]
+              }
+            },
+            "phi(n) is not within 5000 guesses of n - 2*sqrt(n). No leak."
+          ],
+          "time_ms": 1.233
+        },
+        {
+          "attack": "bad_modulus",
+          "week": 11,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "A good modulus is a product of two distinct large odd primes. Check the cheap structural flaws first (W11 primality).",
+            "isqrt(n) = 4582588678; 4582588678^2 != n.",
+            {
+              "table": {
+                "headers": [
+                  "Miller-Rabin base",
+                  "result"
+                ],
+                "rows": [
+                  [
+                    "2",
+                    "composite witness"
+                  ],
+                  [
+                    "3",
+                    "composite witness"
+                  ],
+                  [
+                    "5",
+                    "composite witness"
+                  ],
+                  [
+                    "7",
+                    "composite witness"
+                  ],
+                  [
+                    "11",
+                    "composite witness"
+                  ],
+                  [
+                    "13",
+                    "composite witness"
+                  ]
+                ]
+              }
+            },
+            "n is composite with no cheap structural flaw (not even, not a perfect square)."
+          ],
+          "time_ms": 0.122
+        },
+        {
+          "attack": "shared_prime",
+          "week": 2,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "Compute gcd(n_i, n_j) for every pair (W2 Euclid). A gcd strictly between 1 and n is a shared prime, which factors both keys instantly.",
+            {
+              "table": {
+                "headers": [
+                  "pair",
+                  "gcd"
+                ],
+                "rows": [
+                  [
+                    "key-3 x key-1",
+                    "1"
+                  ],
+                  [
+                    "key-3 x key-2",
+                    "1"
+                  ],
+                  [
+                    "key-3 x key-4",
+                    "1"
+                  ],
+                  [
+                    "key-3 x key-5",
+                    "1"
+                  ],
+                  [
+                    "key-3 x key-6",
+                    "1"
+                  ],
+                  [
+                    "key-3 x key-7",
+                    "1"
+                  ],
+                  [
+                    "key-3 x key-8",
+                    "1"
+                  ],
+                  [
+                    "key-3 x key-9",
+                    "1"
+                  ]
+                ]
+              }
+            },
+            "All gcds are 1: this key shares no prime with the others in the batch."
+          ],
+          "time_ms": 0.003
+        }
+      ]
+    },
+    {
+      "label": "key-4",
+      "note": "Wiener: small private exponent d",
+      "n": "903339993322290617224163",
+      "e": "809492684089611573251633",
+      "bits": 80,
+      "verdict": "BROKEN",
+      "results": [
+        {
+          "attack": "trial_division",
+          "week": 3,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "Divide n by 2, then every odd d up to 100000. A hit means d | n (W1 divisibility, W3 primes).",
+            {
+              "table": {
+                "headers": [
+                  "d",
+                  "n mod d"
+                ],
+                "rows": [
+                  [
+                    "2",
+                    "1"
+                  ],
+                  [
+                    "3",
+                    "2"
+                  ],
+                  [
+                    "5",
+                    "3"
+                  ],
+                  [
+                    "7",
+                    "4"
+                  ],
+                  [
+                    "9",
+                    "8"
+                  ]
+                ]
+              }
+            },
+            "No divisor up to 100000 (50000 candidates tried). Smallest prime factor is larger than that."
+          ],
+          "time_ms": 5.272
+        },
+        {
+          "attack": "fermat",
+          "week": 12,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "If p and q are close, n = a^2 - b^2 with a = (p+q)/2 near sqrt(n). Try a = ceil(sqrt n), a+1, ... until a^2 - n is a perfect square (W12).",
+            {
+              "table": {
+                "headers": [
+                  "iter",
+                  "a",
+                  "a^2 - n",
+                  "square?"
+                ],
+                "rows": [
+                  [
+                    "1",
+                    "950441998926",
+                    "159967929313",
+                    "no"
+                  ],
+                  [
+                    "2",
+                    "950441998927",
+                    "2060851927166",
+                    "no"
+                  ],
+                  [
+                    "3",
+                    "950441998928",
+                    "3961735925021",
+                    "no"
+                  ],
+                  [
+                    "4",
+                    "950441998929",
+                    "5862619922878",
+                    "no"
+                  ]
+                ]
+              }
+            },
+            "No square found in 10000 iterations: p and q are not close enough."
+          ],
+          "time_ms": 2.245
+        },
+        {
+          "attack": "pollard_rho",
+          "week": 12,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "Walk x -> x^2 + c (mod n) with a tortoise and a hare. When the walks collide mod a hidden prime p, gcd(|x - y|, n) reveals p (W12, W10 cost ~ sqrt(p)).",
+            "No factor in 20000 iterations per attempt. Expected cost ~ sqrt(smallest prime), which is too big here."
+          ],
+          "time_ms": 66.607
+        },
+        {
+          "attack": "wiener",
+          "week": 5,
+          "broken": true,
+          "factors": [
+            "834845933959",
+            "1082043951557"
+          ],
+          "private_key": "170393",
+          "steps": [
+            "If d < n^(1/4)/3 then k/d is a convergent of the continued fraction of e/n. For each convergent k/d: phi = (e*d - 1)/k, then solve x^2 - (n - phi + 1)x + n = 0 (W5, W7).",
+            "Continued fraction of e/n starts [0, 1, 8, 1, 1, 1, 2, 24, ...]",
+            {
+              "table": {
+                "headers": [
+                  "i",
+                  "k/d",
+                  "k | e*d-1 ?",
+                  "phi candidate",
+                  "disc square?"
+                ],
+                "rows": [
+                  [
+                    "1",
+                    "1/1",
+                    "yes",
+                    "809492684089611573251632",
+                    "no"
+                  ],
+                  [
+                    "2",
+                    "8/9",
+                    "yes",
+                    "910679269600813019908087",
+                    "no"
+                  ],
+                  [
+                    "3",
+                    "9/10",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "4",
+                    "17/19",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "5",
+                    "26/29",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "6",
+                    "69/77",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "7",
+                    "1682/1877",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "8",
+                    "6797/7585",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "9",
+                    "8479/9462",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "10",
+                    "23755/26509",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "11",
+                    "32234/35971",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "12",
+                    "120457/134422",
+                    "no",
+                    "-",
+                    "-"
+                  ]
+                ]
+              }
+            },
+            "Convergent 152691/170393: d = 170393 is the private exponent.",
+            "n = 834845933959 x 1082043951557"
+          ],
+          "time_ms": 0.067
+        },
+        {
+          "attack": "phi_leak",
+          "week": 7,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "phi(n) = n - (p+q) + 1, so p+q = s is close to 2*sqrt(n) when p, q are close. Guess s upward from ceil(2*sqrt(n)); a valid s makes s^2 - 4n a perfect square (W6/W7).",
+            {
+              "table": {
+                "headers": [
+                  "k",
+                  "s guess",
+                  "phi guess",
+                  "s^2-4n square?"
+                ],
+                "rows": [
+                  [
+                    "0",
+                    "1900883997852",
+                    "903339993320389733226312",
+                    "no"
+                  ],
+                  [
+                    "1",
+                    "1900883997853",
+                    "903339993320389733226311",
+                    "no"
+                  ],
+                  [
+                    "2",
+                    "1900883997854",
+                    "903339993320389733226310",
+                    "no"
+                  ],
+                  [
+                    "3",
+                    "1900883997855",
+                    "903339993320389733226309",
+                    "no"
+                  ]
+                ]
+              }
+            },
+            "phi(n) is not within 5000 guesses of n - 2*sqrt(n). No leak."
+          ],
+          "time_ms": 1.319
+        },
+        {
+          "attack": "bad_modulus",
+          "week": 11,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "A good modulus is a product of two distinct large odd primes. Check the cheap structural flaws first (W11 primality).",
+            "isqrt(n) = 950441998925; 950441998925^2 != n.",
+            {
+              "table": {
+                "headers": [
+                  "Miller-Rabin base",
+                  "result"
+                ],
+                "rows": [
+                  [
+                    "2",
+                    "composite witness"
+                  ],
+                  [
+                    "3",
+                    "composite witness"
+                  ],
+                  [
+                    "5",
+                    "composite witness"
+                  ],
+                  [
+                    "7",
+                    "composite witness"
+                  ],
+                  [
+                    "11",
+                    "composite witness"
+                  ],
+                  [
+                    "13",
+                    "composite witness"
+                  ]
+                ]
+              }
+            },
+            "n is composite with no cheap structural flaw (not even, not a perfect square)."
+          ],
+          "time_ms": 0.146
+        },
+        {
+          "attack": "shared_prime",
+          "week": 2,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "Compute gcd(n_i, n_j) for every pair (W2 Euclid). A gcd strictly between 1 and n is a shared prime, which factors both keys instantly.",
+            {
+              "table": {
+                "headers": [
+                  "pair",
+                  "gcd"
+                ],
+                "rows": [
+                  [
+                    "key-4 x key-1",
+                    "1"
+                  ],
+                  [
+                    "key-4 x key-2",
+                    "1"
+                  ],
+                  [
+                    "key-4 x key-3",
+                    "1"
+                  ],
+                  [
+                    "key-4 x key-5",
+                    "1"
+                  ],
+                  [
+                    "key-4 x key-6",
+                    "1"
+                  ],
+                  [
+                    "key-4 x key-7",
+                    "1"
+                  ],
+                  [
+                    "key-4 x key-8",
+                    "1"
+                  ],
+                  [
+                    "key-4 x key-9",
+                    "1"
+                  ]
+                ]
+              }
+            },
+            "All gcds are 1: this key shares no prime with the others in the batch."
+          ],
+          "time_ms": 0.003
+        }
+      ]
+    },
+    {
+      "label": "key-5",
+      "note": "bad modulus: n = p^2",
+      "n": "1000000014000000049",
+      "e": "65537",
+      "bits": 60,
+      "verdict": "BROKEN",
+      "results": [
+        {
+          "attack": "trial_division",
+          "week": 3,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "Divide n by 2, then every odd d up to 100000. A hit means d | n (W1 divisibility, W3 primes).",
+            {
+              "table": {
+                "headers": [
+                  "d",
+                  "n mod d"
+                ],
+                "rows": [
+                  [
+                    "2",
+                    "1"
+                  ],
+                  [
+                    "3",
+                    "1"
+                  ],
+                  [
+                    "5",
+                    "4"
+                  ],
+                  [
+                    "7",
+                    "1"
+                  ],
+                  [
+                    "9",
+                    "1"
+                  ]
+                ]
+              }
+            },
+            "No divisor up to 100000 (50000 candidates tried). Smallest prime factor is larger than that."
+          ],
+          "time_ms": 6.316
+        },
+        {
+          "attack": "fermat",
+          "week": 12,
+          "broken": true,
+          "factors": [
+            "1000000007",
+            "1000000007"
+          ],
+          "private_key": "883516187",
+          "steps": [
+            "If p and q are close, n = a^2 - b^2 with a = (p+q)/2 near sqrt(n). Try a = ceil(sqrt n), a+1, ... until a^2 - n is a perfect square (W12).",
+            {
+              "table": {
+                "headers": [
+                  "iter",
+                  "a",
+                  "a^2 - n",
+                  "square?"
+                ],
+                "rows": [
+                  [
+                    "1",
+                    "1000000007",
+                    "0",
+                    "yes"
+                  ]
+                ]
+              }
+            },
+            "b = 0, so p = a - b, q = a + b.",
+            "n = 1000000007 x 1000000007"
+          ],
+          "time_ms": 0.02
+        },
+        {
+          "attack": "pollard_rho",
+          "week": 12,
+          "broken": true,
+          "factors": [
+            "1000000007",
+            "1000000007"
+          ],
+          "private_key": "883516187",
+          "steps": [
+            "Walk x -> x^2 + c (mod n) with a tortoise and a hare. When the walks collide mod a hidden prime p, gcd(|x - y|, n) reveals p (W12, W10 cost ~ sqrt(p)).",
+            "c = 3",
+            {
+              "table": {
+                "headers": [
+                  "i",
+                  "x",
+                  "y",
+                  "gcd(|x-y|, n)"
+                ],
+                "rows": [
+                  [
+                    "1",
+                    "7",
+                    "52",
+                    "1"
+                  ],
+                  [
+                    "2",
+                    "52",
+                    "7327852",
+                    "1"
+                  ],
+                  [
+                    "3",
+                    "2707",
+                    "216405743891080482",
+                    "1"
+                  ],
+                  [
+                    "4",
+                    "7327852",
+                    "689915759993238095",
+                    "1"
+                  ],
+                  [
+                    "19941",
+                    "36193812436012379",
+                    "798886557774861559",
+                    "1000000007"
+                  ]
+                ]
+              }
+            },
+            "gcd = 1000000007 is a proper factor after 19941 iterations.",
+            "n = 1000000007 x 1000000007"
+          ],
+          "time_ms": 45.345
+        },
+        {
+          "attack": "wiener",
+          "week": 5,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "If d < n^(1/4)/3 then k/d is a convergent of the continued fraction of e/n. For each convergent k/d: phi = (e*d - 1)/k, then solve x^2 - (n - phi + 1)x + n = 0 (W5, W7).",
+            "Continued fraction of e/n starts [0, 15258556449028, 1, 3, 1, 5, 2, 33, ...]",
+            {
+              "table": {
+                "headers": [
+                  "i",
+                  "k/d",
+                  "k | e*d-1 ?",
+                  "phi candidate",
+                  "disc square?"
+                ],
+                "rows": [
+                  [
+                    "1",
+                    "1/15258556449028",
+                    "yes",
+                    "1000000013999948035",
+                    "no"
+                  ],
+                  [
+                    "2",
+                    "1/15258556449029",
+                    "yes",
+                    "1000000014000013572",
+                    "no"
+                  ],
+                  [
+                    "3",
+                    "4/61034225796115",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "4",
+                    "5/76292782245144",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "5",
+                    "29/442498137021835",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "6",
+                    "63/961289056288814",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "7",
+                    "2108/32165036994552697",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "8",
+                    "21143/322611659001815784",
+                    "yes",
+                    "1000000014000000049",
+                    "no"
+                  ],
+                  [
+                    "9",
+                    "65537/1000000014000000049",
+                    "no",
+                    "-",
+                    "-"
+                  ]
+                ]
+              }
+            },
+            "No convergent gives a valid phi. d is not small enough for Wiener."
+          ],
+          "time_ms": 0.036
+        },
+        {
+          "attack": "phi_leak",
+          "week": 7,
+          "broken": true,
+          "factors": [
+            "1000000007",
+            "1000000007"
+          ],
+          "private_key": "883516187",
+          "steps": [
+            "phi(n) = n - (p+q) + 1, so p+q = s is close to 2*sqrt(n) when p, q are close. Guess s upward from ceil(2*sqrt(n)); a valid s makes s^2 - 4n a perfect square (W6/W7).",
+            {
+              "table": {
+                "headers": [
+                  "k",
+                  "s guess",
+                  "phi guess",
+                  "s^2-4n square?"
+                ],
+                "rows": [
+                  [
+                    "0",
+                    "2000000014",
+                    "1000000012000000036",
+                    "yes"
+                  ]
+                ]
+              }
+            },
+            "phi(n) = 1000000012000000036. Roots of x^2 - s*x + n are p and q.",
+            "n = 1000000007 x 1000000007"
+          ],
+          "time_ms": 0.012
+        },
+        {
+          "attack": "bad_modulus",
+          "week": 11,
+          "broken": true,
+          "factors": [
+            "1000000007",
+            "1000000007"
+          ],
+          "private_key": "883516187",
+          "steps": [
+            "A good modulus is a product of two distinct large odd primes. Check the cheap structural flaws first (W11 primality).",
+            "isqrt(n) = 1000000007; 1000000007^2 = n.",
+            "n is a perfect square: n = p^2, so phi = p(p-1) and p = isqrt(n).",
+            "n = 1000000007 x 1000000007"
+          ],
+          "time_ms": 0.005
+        },
+        {
+          "attack": "shared_prime",
+          "week": 2,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "Compute gcd(n_i, n_j) for every pair (W2 Euclid). A gcd strictly between 1 and n is a shared prime, which factors both keys instantly.",
+            {
+              "table": {
+                "headers": [
+                  "pair",
+                  "gcd"
+                ],
+                "rows": [
+                  [
+                    "key-5 x key-1",
+                    "1"
+                  ],
+                  [
+                    "key-5 x key-2",
+                    "1"
+                  ],
+                  [
+                    "key-5 x key-3",
+                    "1"
+                  ],
+                  [
+                    "key-5 x key-4",
+                    "1"
+                  ],
+                  [
+                    "key-5 x key-6",
+                    "1"
+                  ],
+                  [
+                    "key-5 x key-7",
+                    "1"
+                  ],
+                  [
+                    "key-5 x key-8",
+                    "1"
+                  ],
+                  [
+                    "key-5 x key-9",
+                    "1"
+                  ]
+                ]
+              }
+            },
+            "All gcds are 1: this key shares no prime with the others in the batch."
+          ],
+          "time_ms": 0.003
+        }
+      ]
+    },
+    {
+      "label": "key-6",
+      "note": "SAFE: random 256-bit primes (512-bit demo size; real keys use >= 2048)",
+      "n": "8450576070671098264097958324549524219799471875380314670169169826549401787095248184341933575892475642270153049048618102566966346311520772789623832484570469",
+      "e": "65537",
+      "bits": 512,
+      "verdict": "SAFE",
+      "results": [
+        {
+          "attack": "trial_division",
+          "week": 3,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "Divide n by 2, then every odd d up to 100000. A hit means d | n (W1 divisibility, W3 primes).",
+            {
+              "table": {
+                "headers": [
+                  "d",
+                  "n mod d"
+                ],
+                "rows": [
+                  [
+                    "2",
+                    "1"
+                  ],
+                  [
+                    "3",
+                    "1"
+                  ],
+                  [
+                    "5",
+                    "4"
+                  ],
+                  [
+                    "7",
+                    "5"
+                  ],
+                  [
+                    "9",
+                    "7"
+                  ]
+                ]
+              }
+            },
+            "No divisor up to 100000 (50000 candidates tried). Smallest prime factor is larger than that."
+          ],
+          "time_ms": 10.683
+        },
+        {
+          "attack": "fermat",
+          "week": 12,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "If p and q are close, n = a^2 - b^2 with a = (p+q)/2 near sqrt(n). Try a = ceil(sqrt n), a+1, ... until a^2 - n is a perfect square (W12).",
+            {
+              "table": {
+                "headers": [
+                  "iter",
+                  "a",
+                  "a^2 - n",
+                  "square?"
+                ],
+                "rows": [
+                  [
+                    "1",
+                    "91927014912217715632299323956824105197843960199391640535728670096140135791288",
+                    "67320857558629752755990170188643185571391867211889743640591097672081412128475",
+                    "no"
+                  ],
+                  [
+                    "2",
+                    "91927014912217715632299323956824105197843960199391640535728670096140135791289",
+                    "251174887383065184020588818102291395967079787610673024712048437864361683711052",
+                    "no"
+                  ],
+                  [
+                    "3",
+                    "91927014912217715632299323956824105197843960199391640535728670096140135791290",
+                    "435028917207500615285187466015939606362767708009456305783505778056641955293631",
+                    "no"
+                  ],
+                  [
+                    "4",
+                    "91927014912217715632299323956824105197843960199391640535728670096140135791291",
+                    "618882947031936046549786113929587816758455628408239586854963118248922226876212",
+                    "no"
+                  ]
+                ]
+              }
+            },
+            "No square found in 10000 iterations: p and q are not close enough."
+          ],
+          "time_ms": 10.035
+        },
+        {
+          "attack": "pollard_rho",
+          "week": 12,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "Walk x -> x^2 + c (mod n) with a tortoise and a hare. When the walks collide mod a hidden prime p, gcd(|x - y|, n) reveals p (W12, W10 cost ~ sqrt(p)).",
+            "No factor in 20000 iterations per attempt. Expected cost ~ sqrt(smallest prime), which is too big here."
+          ],
+          "time_ms": 450.156
+        },
+        {
+          "attack": "wiener",
+          "week": 5,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "If d < n^(1/4)/3 then k/d is a convergent of the continued fraction of e/n. For each convergent k/d: phi = (e*d - 1)/k, then solve x^2 - (n - phi + 1)x + n = 0 (W5, W7).",
+            "Continued fraction of e/n starts [0, 128943590195936619987151659742580896589704622966878475825398932306169061554469203417030586933983484783712300670592460786532284759929822432971051962777, 1, 4, 1, 3, 1, 3, ...]",
+            {
+              "table": {
+                "headers": [
+                  "i",
+                  "k/d",
+                  "k | e*d-1 ?",
+                  "phi candidate",
+                  "disc square?"
+                ],
+                "rows": [
+                  [
+                    "1",
+                    "1/128943590195936619987151659742580896589704622966878475825398932306169061554469203417030586933983484783712300670592460786532284759929822432971051962777",
+                    "yes",
+                    "8450576070671098264097958324549524219799471875380314670169169826549401787095248184341933575892475642270153049048618102566966346311520772789623832484516248",
+                    "no"
+                  ],
+                  [
+                    "2",
+                    "1/128943590195936619987151659742580896589704622966878475825398932306169061554469203417030586933983484783712300670592460786532284759929822432971051962778",
+                    "yes",
+                    "8450576070671098264097958324549524219799471875380314670169169826549401787095248184341933575892475642270153049048618102566966346311520772789623832484581785",
+                    "no"
+                  ],
+                  [
+                    "3",
+                    "5/644717950979683099935758298712904482948523114834392379126994661530845307772346017085152934669917423918561503352962303932661423799649112164855259813889",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "4",
+                    "6/773661541175619719922909958455485379538227737801270854952393593837014369326815220502183521603900908702273804023554764719193708559578934597826311776667",
+                    "yes",
+                    "8450576070671098264097958324549524219799471875380314670169169826549401787095248184341933575892475642270153049048618102566966346311520772789623832484570863",
+                    "no"
+                  ],
+                  [
+                    "5",
+                    "23/2965702574506542259704488174079360621563206328238204943984175443041888415752791678591703499481620150025382915423626598090242549478385915958334195143890",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "6",
+                    "29/3739364115682161979627398132534846001101434066039475798936569036878902785079606899093887021085521058727656719447181362809436258037964850556160506920557",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "7",
+                    "110/14183794921553028198586682571683898624867508526356632340793882553678596770991612375873364562738183326208353073765170686518551323592280467626815715905561",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "8",
+                    "139/17923159037235190178214080704218744625968942592396108139730451590557499556071219274967251583823704384936009793212352049327987581630245318182976222826118",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "9",
+                    "249/32106953958788218376800763275902643250836451118752740480524334144236096327062831650840616146561887711144362866977522735846538905222525785809791938731679",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "10",
+                    "388/50030112996023408555014843980121387876805393711148848620254785734793595883134050925807867730385592096080372660189874785174526486852771103992768161557797",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "11",
+                    "3741/482377970922998895371934359096995134142084994519092378062817405757378459275269289983111425720032216575867716808686395802417277286897465721744705392751852",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "12",
+                    "11611/1497164025765020094670817921271106790303060377268425982808707003006928973708941920875142144890482241823683523086249062192426358347545168269226884339813353",
+                    "no",
+                    "-",
+                    "-"
+                  ]
+                ]
+              }
+            },
+            "No convergent gives a valid phi. d is not small enough for Wiener."
+          ],
+          "time_ms": 0.053
+        },
+        {
+          "attack": "phi_leak",
+          "week": 7,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "phi(n) = n - (p+q) + 1, so p+q = s is close to 2*sqrt(n) when p, q are close. Guess s upward from ceil(2*sqrt(n)); a valid s makes s^2 - 4n a perfect square (W6/W7).",
+            {
+              "table": {
+                "headers": [
+                  "k",
+                  "s guess",
+                  "phi guess",
+                  "s^2-4n square?"
+                ],
+                "rows": [
+                  [
+                    "0",
+                    "183854029824435431264598647913648210395687920398783281071457340192280271582576",
+                    "8450576070671098264097958324549524219799471875380314670169169826549401787095064330312109140461211043622239400838222414646567563030449315449431552212987894",
+                    "no"
+                  ],
+                  [
+                    "1",
+                    "183854029824435431264598647913648210395687920398783281071457340192280271582577",
+                    "8450576070671098264097958324549524219799471875380314670169169826549401787095064330312109140461211043622239400838222414646567563030449315449431552212987893",
+                    "no"
+                  ],
+                  [
+                    "2",
+                    "183854029824435431264598647913648210395687920398783281071457340192280271582578",
+                    "8450576070671098264097958324549524219799471875380314670169169826549401787095064330312109140461211043622239400838222414646567563030449315449431552212987892",
+                    "no"
+                  ],
+                  [
+                    "3",
+                    "183854029824435431264598647913648210395687920398783281071457340192280271582579",
+                    "8450576070671098264097958324549524219799471875380314670169169826549401787095064330312109140461211043622239400838222414646567563030449315449431552212987891",
+                    "no"
+                  ]
+                ]
+              }
+            },
+            "phi(n) is not within 5000 guesses of n - 2*sqrt(n). No leak."
+          ],
+          "time_ms": 4.615
+        },
+        {
+          "attack": "bad_modulus",
+          "week": 11,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "A good modulus is a product of two distinct large odd primes. Check the cheap structural flaws first (W11 primality).",
+            "isqrt(n) = 91927014912217715632299323956824105197843960199391640535728670096140135791287; 91927014912217715632299323956824105197843960199391640535728670096140135791287^2 != n.",
+            {
+              "table": {
+                "headers": [
+                  "Miller-Rabin base",
+                  "result"
+                ],
+                "rows": [
+                  [
+                    "2",
+                    "composite witness"
+                  ],
+                  [
+                    "3",
+                    "composite witness"
+                  ],
+                  [
+                    "5",
+                    "composite witness"
+                  ],
+                  [
+                    "7",
+                    "composite witness"
+                  ],
+                  [
+                    "11",
+                    "composite witness"
+                  ],
+                  [
+                    "13",
+                    "composite witness"
+                  ]
+                ]
+              }
+            },
+            "n is composite with no cheap structural flaw (not even, not a perfect square)."
+          ],
+          "time_ms": 4.367
+        },
+        {
+          "attack": "shared_prime",
+          "week": 2,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "Compute gcd(n_i, n_j) for every pair (W2 Euclid). A gcd strictly between 1 and n is a shared prime, which factors both keys instantly.",
+            {
+              "table": {
+                "headers": [
+                  "pair",
+                  "gcd"
+                ],
+                "rows": [
+                  [
+                    "key-6 x key-1",
+                    "1"
+                  ],
+                  [
+                    "key-6 x key-2",
+                    "1"
+                  ],
+                  [
+                    "key-6 x key-3",
+                    "1"
+                  ],
+                  [
+                    "key-6 x key-4",
+                    "1"
+                  ],
+                  [
+                    "key-6 x key-5",
+                    "1"
+                  ],
+                  [
+                    "key-6 x key-7",
+                    "1"
+                  ],
+                  [
+                    "key-6 x key-8",
+                    "1"
+                  ],
+                  [
+                    "key-6 x key-9",
+                    "1"
+                  ]
+                ]
+              }
+            },
+            "All gcds are 1: this key shares no prime with the others in the batch."
+          ],
+          "time_ms": 0.003
+        }
+      ]
+    },
+    {
+      "label": "key-7",
+      "note": "batch: shares a prime with key-8",
+      "n": "170598321886518304140053522401027533779",
+      "e": "65537",
+      "bits": 128,
+      "verdict": "BROKEN",
+      "results": [
+        {
+          "attack": "trial_division",
+          "week": 3,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "Divide n by 2, then every odd d up to 100000. A hit means d | n (W1 divisibility, W3 primes).",
+            {
+              "table": {
+                "headers": [
+                  "d",
+                  "n mod d"
+                ],
+                "rows": [
+                  [
+                    "2",
+                    "1"
+                  ],
+                  [
+                    "3",
+                    "2"
+                  ],
+                  [
+                    "5",
+                    "4"
+                  ],
+                  [
+                    "7",
+                    "3"
+                  ],
+                  [
+                    "9",
+                    "5"
+                  ]
+                ]
+              }
+            },
+            "No divisor up to 100000 (50000 candidates tried). Smallest prime factor is larger than that."
+          ],
+          "time_ms": 6.005
+        },
+        {
+          "attack": "fermat",
+          "week": 12,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "If p and q are close, n = a^2 - b^2 with a = (p+q)/2 near sqrt(n). Try a = ceil(sqrt n), a+1, ... until a^2 - n is a perfect square (W12).",
+            {
+              "table": {
+                "headers": [
+                  "iter",
+                  "a",
+                  "a^2 - n",
+                  "square?"
+                ],
+                "rows": [
+                  [
+                    "1",
+                    "13061329254196079110",
+                    "7067492496350858321",
+                    "no"
+                  ],
+                  [
+                    "2",
+                    "13061329254196079111",
+                    "33190151004743016542",
+                    "no"
+                  ],
+                  [
+                    "3",
+                    "13061329254196079112",
+                    "59312809513135174765",
+                    "no"
+                  ],
+                  [
+                    "4",
+                    "13061329254196079113",
+                    "85435468021527332990",
+                    "no"
+                  ]
+                ]
+              }
+            },
+            "No square found in 10000 iterations: p and q are not close enough."
+          ],
+          "time_ms": 3.872
+        },
+        {
+          "attack": "pollard_rho",
+          "week": 12,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "Walk x -> x^2 + c (mod n) with a tortoise and a hare. When the walks collide mod a hidden prime p, gcd(|x - y|, n) reveals p (W12, W10 cost ~ sqrt(p)).",
+            "No factor in 20000 iterations per attempt. Expected cost ~ sqrt(smallest prime), which is too big here."
+          ],
+          "time_ms": 93.83
+        },
+        {
+          "attack": "wiener",
+          "week": 5,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "If d < n^(1/4)/3 then k/d is a convergent of the continued fraction of e/n. For each convergent k/d: phi = (e*d - 1)/k, then solve x^2 - (n - phi + 1)x + n = 0 (W5, W7).",
+            "Continued fraction of e/n starts [0, 2603084088171846501061286332926858, 1, 1, 1, 2, 13, 1, ...]",
+            {
+              "table": {
+                "headers": [
+                  "i",
+                  "k/d",
+                  "k | e*d-1 ?",
+                  "phi candidate",
+                  "disc square?"
+                ],
+                "rows": [
+                  [
+                    "1",
+                    "1/2603084088171846501061286332926858",
+                    "yes",
+                    "170598321886518304140053522401027492745",
+                    "no"
+                  ],
+                  [
+                    "2",
+                    "1/2603084088171846501061286332926859",
+                    "yes",
+                    "170598321886518304140053522401027558282",
+                    "no"
+                  ],
+                  [
+                    "3",
+                    "2/5206168176343693002122572665853717",
+                    "yes",
+                    "170598321886518304140053522401027525514",
+                    "no"
+                  ],
+                  [
+                    "4",
+                    "3/7809252264515539503183858998780576",
+                    "yes",
+                    "170598321886518304140053522401027536437",
+                    "no"
+                  ],
+                  [
+                    "5",
+                    "8/20824672705374772008490290663414869",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "6",
+                    "107/278529997434387575613557637623173873",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "7",
+                    "115/299354670139762347622047928286588742",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "8",
+                    "452/1176594007853674618479701422482940099",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "9",
+                    "1019/2652542685847111584581450773252468940",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "10",
+                    "2490/6481679379547897787642602968987877979",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "11",
+                    "3509/9134222065395009372224053742240346919",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "12",
+                    "5999/15615901444942907159866656711228224898",
+                    "no",
+                    "-",
+                    "-"
+                  ]
+                ]
+              }
+            },
+            "No convergent gives a valid phi. d is not small enough for Wiener."
+          ],
+          "time_ms": 0.044
+        },
+        {
+          "attack": "phi_leak",
+          "week": 7,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "phi(n) = n - (p+q) + 1, so p+q = s is close to 2*sqrt(n) when p, q are close. Guess s upward from ceil(2*sqrt(n)); a valid s makes s^2 - 4n a perfect square (W6/W7).",
+            {
+              "table": {
+                "headers": [
+                  "k",
+                  "s guess",
+                  "phi guess",
+                  "s^2-4n square?"
+                ],
+                "rows": [
+                  [
+                    "0",
+                    "26122658508392158220",
+                    "170598321886518304113930863892635375560",
+                    "no"
+                  ],
+                  [
+                    "1",
+                    "26122658508392158221",
+                    "170598321886518304113930863892635375559",
+                    "no"
+                  ],
+                  [
+                    "2",
+                    "26122658508392158222",
+                    "170598321886518304113930863892635375558",
+                    "no"
+                  ],
+                  [
+                    "3",
+                    "26122658508392158223",
+                    "170598321886518304113930863892635375557",
+                    "no"
+                  ]
+                ]
+              }
+            },
+            "phi(n) is not within 5000 guesses of n - 2*sqrt(n). No leak."
+          ],
+          "time_ms": 2.098
+        },
+        {
+          "attack": "bad_modulus",
+          "week": 11,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "A good modulus is a product of two distinct large odd primes. Check the cheap structural flaws first (W11 primality).",
+            "isqrt(n) = 13061329254196079109; 13061329254196079109^2 != n.",
+            {
+              "table": {
+                "headers": [
+                  "Miller-Rabin base",
+                  "result"
+                ],
+                "rows": [
+                  [
+                    "2",
+                    "composite witness"
+                  ],
+                  [
+                    "3",
+                    "composite witness"
+                  ],
+                  [
+                    "5",
+                    "composite witness"
+                  ],
+                  [
+                    "7",
+                    "composite witness"
+                  ],
+                  [
+                    "11",
+                    "composite witness"
+                  ],
+                  [
+                    "13",
+                    "composite witness"
+                  ]
+                ]
+              }
+            },
+            "n is composite with no cheap structural flaw (not even, not a perfect square)."
+          ],
+          "time_ms": 0.216
+        },
+        {
+          "attack": "shared_prime",
+          "week": 2,
+          "broken": true,
+          "factors": [
+            "12156271914479095157",
+            "14033769817481790247"
+          ],
+          "private_key": "2450102838682362598622778617676567329",
+          "steps": [
+            "Compute gcd(n_i, n_j) for every pair (W2 Euclid). A gcd strictly between 1 and n is a shared prime, which factors both keys instantly.",
+            {
+              "table": {
+                "headers": [
+                  "pair",
+                  "gcd"
+                ],
+                "rows": [
+                  [
+                    "key-7 x key-1",
+                    "1"
+                  ],
+                  [
+                    "key-7 x key-2",
+                    "1"
+                  ],
+                  [
+                    "key-7 x key-3",
+                    "1"
+                  ],
+                  [
+                    "key-7 x key-4",
+                    "1"
+                  ],
+                  [
+                    "key-7 x key-5",
+                    "1"
+                  ],
+                  [
+                    "key-7 x key-6",
+                    "1"
+                  ],
+                  [
+                    "key-7 x key-8",
+                    "14033769817481790247"
+                  ],
+                  [
+                    "key-7 x key-9",
+                    "1"
+                  ]
+                ]
+              }
+            },
+            "Shared prime 14033769817481790247 found. n = 12156271914479095157 x 14033769817481790247"
+          ],
+          "time_ms": 0.003
+        }
+      ]
+    },
+    {
+      "label": "key-8",
+      "note": "batch: shares a prime with key-7",
+      "n": "164089169482345299193082183410581932389",
+      "e": "65537",
+      "bits": 127,
+      "verdict": "BROKEN",
+      "results": [
+        {
+          "attack": "trial_division",
+          "week": 3,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "Divide n by 2, then every odd d up to 100000. A hit means d | n (W1 divisibility, W3 primes).",
+            {
+              "table": {
+                "headers": [
+                  "d",
+                  "n mod d"
+                ],
+                "rows": [
+                  [
+                    "2",
+                    "1"
+                  ],
+                  [
+                    "3",
+                    "1"
+                  ],
+                  [
+                    "5",
+                    "4"
+                  ],
+                  [
+                    "7",
+                    "3"
+                  ],
+                  [
+                    "9",
+                    "7"
+                  ]
+                ]
+              }
+            },
+            "No divisor up to 100000 (50000 candidates tried). Smallest prime factor is larger than that."
+          ],
+          "time_ms": 5.985
+        },
+        {
+          "attack": "fermat",
+          "week": 12,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "If p and q are close, n = a^2 - b^2 with a = (p+q)/2 near sqrt(n). Try a = ceil(sqrt n), a+1, ... until a^2 - n is a perfect square (W12).",
+            {
+              "table": {
+                "headers": [
+                  "iter",
+                  "a",
+                  "a^2 - n",
+                  "square?"
+                ],
+                "rows": [
+                  [
+                    "1",
+                    "12809729485135324247",
+                    "25598774831244184620",
+                    "no"
+                  ],
+                  [
+                    "2",
+                    "12809729485135324248",
+                    "51218233801514833115",
+                    "no"
+                  ],
+                  [
+                    "3",
+                    "12809729485135324249",
+                    "76837692771785481612",
+                    "no"
+                  ],
+                  [
+                    "4",
+                    "12809729485135324250",
+                    "102457151742056130111",
+                    "no"
+                  ]
+                ]
+              }
+            },
+            "No square found in 10000 iterations: p and q are not close enough."
+          ],
+          "time_ms": 3.989
+        },
+        {
+          "attack": "pollard_rho",
+          "week": 12,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "Walk x -> x^2 + c (mod n) with a tortoise and a hare. When the walks collide mod a hidden prime p, gcd(|x - y|, n) reveals p (W12, W10 cost ~ sqrt(p)).",
+            "No factor in 20000 iterations per attempt. Expected cost ~ sqrt(smallest prime), which is too big here."
+          ],
+          "time_ms": 90.112
+        },
+        {
+          "attack": "wiener",
+          "week": 5,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "If d < n^(1/4)/3 then k/d is a convergent of the continued fraction of e/n. For each convergent k/d: phi = (e*d - 1)/k, then solve x^2 - (n - phi + 1)x + n = 0 (W5, W7).",
+            "Continued fraction of e/n starts [0, 2503763820167924976625145847545385, 1, 1, 5, 5, 18, 1, ...]",
+            {
+              "table": {
+                "headers": [
+                  "i",
+                  "k/d",
+                  "k | e*d-1 ?",
+                  "phi candidate",
+                  "disc square?"
+                ],
+                "rows": [
+                  [
+                    "1",
+                    "1/2503763820167924976625145847545385",
+                    "yes",
+                    "164089169482345299193082183410581896744",
+                    "no"
+                  ],
+                  [
+                    "2",
+                    "1/2503763820167924976625145847545386",
+                    "yes",
+                    "164089169482345299193082183410581962281",
+                    "no"
+                  ],
+                  [
+                    "3",
+                    "2/5007527640335849953250291695090771",
+                    "yes",
+                    "164089169482345299193082183410581929513",
+                    "no"
+                  ],
+                  [
+                    "4",
+                    "11/27541402021847174742876604322999241",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "5",
+                    "57/142714537749571723667633313310086976",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "6",
+                    "1037/2596403081514138200760276243904564809",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "7",
+                    "1094/2739117619263709924427909557214651785",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "8",
+                    "2131/5335520700777848125188185801119216594",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "9",
+                    "3225/8074638320041558049616095358333868379",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "10",
+                    "31156/78007265581151870571733044026124032005",
+                    "yes",
+                    "164089169482345299193082183410581932389",
+                    "no"
+                  ],
+                  [
+                    "11",
+                    "65537/164089169482345299193082183410581932389",
+                    "no",
+                    "-",
+                    "-"
+                  ]
+                ]
+              }
+            },
+            "No convergent gives a valid phi. d is not small enough for Wiener."
+          ],
+          "time_ms": 0.038
+        },
+        {
+          "attack": "phi_leak",
+          "week": 7,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "phi(n) = n - (p+q) + 1, so p+q = s is close to 2*sqrt(n) when p, q are close. Guess s upward from ceil(2*sqrt(n)); a valid s makes s^2 - 4n a perfect square (W6/W7).",
+            {
+              "table": {
+                "headers": [
+                  "k",
+                  "s guess",
+                  "phi guess",
+                  "s^2-4n square?"
+                ],
+                "rows": [
+                  [
+                    "0",
+                    "25619458970270648493",
+                    "164089169482345299167462724440311283897",
+                    "no"
+                  ],
+                  [
+                    "1",
+                    "25619458970270648494",
+                    "164089169482345299167462724440311283896",
+                    "no"
+                  ],
+                  [
+                    "2",
+                    "25619458970270648495",
+                    "164089169482345299167462724440311283895",
+                    "no"
+                  ],
+                  [
+                    "3",
+                    "25619458970270648496",
+                    "164089169482345299167462724440311283894",
+                    "no"
+                  ]
+                ]
+              }
+            },
+            "phi(n) is not within 5000 guesses of n - 2*sqrt(n). No leak."
+          ],
+          "time_ms": 2.093
+        },
+        {
+          "attack": "bad_modulus",
+          "week": 11,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "A good modulus is a product of two distinct large odd primes. Check the cheap structural flaws first (W11 primality).",
+            "isqrt(n) = 12809729485135324246; 12809729485135324246^2 != n.",
+            {
+              "table": {
+                "headers": [
+                  "Miller-Rabin base",
+                  "result"
+                ],
+                "rows": [
+                  [
+                    "2",
+                    "composite witness"
+                  ],
+                  [
+                    "3",
+                    "composite witness"
+                  ],
+                  [
+                    "5",
+                    "composite witness"
+                  ],
+                  [
+                    "7",
+                    "composite witness"
+                  ],
+                  [
+                    "11",
+                    "composite witness"
+                  ],
+                  [
+                    "13",
+                    "composite witness"
+                  ]
+                ]
+              }
+            },
+            "n is composite with no cheap structural flaw (not even, not a perfect square)."
+          ],
+          "time_ms": 0.218
+        },
+        {
+          "attack": "shared_prime",
+          "week": 2,
+          "broken": true,
+          "factors": [
+            "11692451252687664787",
+            "14033769817481790247"
+          ],
+          "private_key": "25758722181887612155480997612923441217",
+          "steps": [
+            "Compute gcd(n_i, n_j) for every pair (W2 Euclid). A gcd strictly between 1 and n is a shared prime, which factors both keys instantly.",
+            {
+              "table": {
+                "headers": [
+                  "pair",
+                  "gcd"
+                ],
+                "rows": [
+                  [
+                    "key-8 x key-1",
+                    "1"
+                  ],
+                  [
+                    "key-8 x key-2",
+                    "1"
+                  ],
+                  [
+                    "key-8 x key-3",
+                    "1"
+                  ],
+                  [
+                    "key-8 x key-4",
+                    "1"
+                  ],
+                  [
+                    "key-8 x key-5",
+                    "1"
+                  ],
+                  [
+                    "key-8 x key-6",
+                    "1"
+                  ],
+                  [
+                    "key-8 x key-7",
+                    "14033769817481790247"
+                  ],
+                  [
+                    "key-8 x key-9",
+                    "1"
+                  ]
+                ]
+              }
+            },
+            "Shared prime 14033769817481790247 found. n = 11692451252687664787 x 14033769817481790247"
+          ],
+          "time_ms": 0.003
+        }
+      ]
+    },
+    {
+      "label": "key-9",
+      "note": "batch: unrelated key",
+      "n": "144069732899511974287418918060490517091",
+      "e": "65537",
+      "bits": 127,
+      "verdict": "SAFE",
+      "results": [
+        {
+          "attack": "trial_division",
+          "week": 3,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "Divide n by 2, then every odd d up to 100000. A hit means d | n (W1 divisibility, W3 primes).",
+            {
+              "table": {
+                "headers": [
+                  "d",
+                  "n mod d"
+                ],
+                "rows": [
+                  [
+                    "2",
+                    "1"
+                  ],
+                  [
+                    "3",
+                    "2"
+                  ],
+                  [
+                    "5",
+                    "1"
+                  ],
+                  [
+                    "7",
+                    "5"
+                  ],
+                  [
+                    "9",
+                    "8"
+                  ]
+                ]
+              }
+            },
+            "No divisor up to 100000 (50000 candidates tried). Smallest prime factor is larger than that."
+          ],
+          "time_ms": 6.059
+        },
+        {
+          "attack": "fermat",
+          "week": 12,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "If p and q are close, n = a^2 - b^2 with a = (p+q)/2 near sqrt(n). Try a = ceil(sqrt n), a+1, ... until a^2 - n is a perfect square (W12).",
+            {
+              "table": {
+                "headers": [
+                  "iter",
+                  "a",
+                  "a^2 - n",
+                  "square?"
+                ],
+                "rows": [
+                  [
+                    "1",
+                    "12002905185808641315",
+                    "3472419265834412134",
+                    "no"
+                  ],
+                  [
+                    "2",
+                    "12002905185808641316",
+                    "27478229637451694765",
+                    "no"
+                  ],
+                  [
+                    "3",
+                    "12002905185808641317",
+                    "51484040009068977398",
+                    "no"
+                  ],
+                  [
+                    "4",
+                    "12002905185808641318",
+                    "75489850380686260033",
+                    "no"
+                  ]
+                ]
+              }
+            },
+            "No square found in 10000 iterations: p and q are not close enough."
+          ],
+          "time_ms": 3.852
+        },
+        {
+          "attack": "pollard_rho",
+          "week": 12,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "Walk x -> x^2 + c (mod n) with a tortoise and a hare. When the walks collide mod a hidden prime p, gcd(|x - y|, n) reveals p (W12, W10 cost ~ sqrt(p)).",
+            "No factor in 20000 iterations per attempt. Expected cost ~ sqrt(smallest prime), which is too big here."
+          ],
+          "time_ms": 90.478
+        },
+        {
+          "attack": "wiener",
+          "week": 5,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "If d < n^(1/4)/3 then k/d is a convergent of the continued fraction of e/n. For each convergent k/d: phi = (e*d - 1)/k, then solve x^2 - (n - phi + 1)x + n = 0 (W5, W7).",
+            "Continued fraction of e/n starts [0, 2198296121267558391251032516906335, 1, 1, 1, 1, 2, 2, ...]",
+            {
+              "table": {
+                "headers": [
+                  "i",
+                  "k/d",
+                  "k | e*d-1 ?",
+                  "phi candidate",
+                  "disc square?"
+                ],
+                "rows": [
+                  [
+                    "1",
+                    "1/2198296121267558391251032516906335",
+                    "yes",
+                    "144069732899511974287418918060490476894",
+                    "no"
+                  ],
+                  [
+                    "2",
+                    "1/2198296121267558391251032516906336",
+                    "yes",
+                    "144069732899511974287418918060490542431",
+                    "no"
+                  ],
+                  [
+                    "3",
+                    "2/4396592242535116782502065033812671",
+                    "yes",
+                    "144069732899511974287418918060490509663",
+                    "no"
+                  ],
+                  [
+                    "4",
+                    "3/6594888363802675173753097550719007",
+                    "yes",
+                    "144069732899511974287418918060490520586",
+                    "no"
+                  ],
+                  [
+                    "5",
+                    "5/10991480606337791956255162584531678",
+                    "yes",
+                    "144069732899511974287418918060490516217",
+                    "no"
+                  ],
+                  [
+                    "6",
+                    "13/28577849576478259086263422719782363",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "7",
+                    "31/68147179759294310128782008024096404",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "8",
+                    "75/164872209095066879343827438767975171",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "9",
+                    "32731/71952430345208453704037545310861270960",
+                    "no",
+                    "-",
+                    "-"
+                  ],
+                  [
+                    "10",
+                    "65537/144069732899511974287418918060490517091",
+                    "no",
+                    "-",
+                    "-"
+                  ]
+                ]
+              }
+            },
+            "No convergent gives a valid phi. d is not small enough for Wiener."
+          ],
+          "time_ms": 0.038
+        },
+        {
+          "attack": "phi_leak",
+          "week": 7,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "phi(n) = n - (p+q) + 1, so p+q = s is close to 2*sqrt(n) when p, q are close. Guess s upward from ceil(2*sqrt(n)); a valid s makes s^2 - 4n a perfect square (W6/W7).",
+            {
+              "table": {
+                "headers": [
+                  "k",
+                  "s guess",
+                  "phi guess",
+                  "s^2-4n square?"
+                ],
+                "rows": [
+                  [
+                    "0",
+                    "24005810371617282630",
+                    "144069732899511974263413107688873234462",
+                    "no"
+                  ],
+                  [
+                    "1",
+                    "24005810371617282631",
+                    "144069732899511974263413107688873234461",
+                    "no"
+                  ],
+                  [
+                    "2",
+                    "24005810371617282632",
+                    "144069732899511974263413107688873234460",
+                    "no"
+                  ],
+                  [
+                    "3",
+                    "24005810371617282633",
+                    "144069732899511974263413107688873234459",
+                    "no"
+                  ]
+                ]
+              }
+            },
+            "phi(n) is not within 5000 guesses of n - 2*sqrt(n). No leak."
+          ],
+          "time_ms": 2.173
+        },
+        {
+          "attack": "bad_modulus",
+          "week": 11,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "A good modulus is a product of two distinct large odd primes. Check the cheap structural flaws first (W11 primality).",
+            "isqrt(n) = 12002905185808641314; 12002905185808641314^2 != n.",
+            {
+              "table": {
+                "headers": [
+                  "Miller-Rabin base",
+                  "result"
+                ],
+                "rows": [
+                  [
+                    "2",
+                    "composite witness"
+                  ],
+                  [
+                    "3",
+                    "composite witness"
+                  ],
+                  [
+                    "5",
+                    "composite witness"
+                  ],
+                  [
+                    "7",
+                    "composite witness"
+                  ],
+                  [
+                    "11",
+                    "composite witness"
+                  ],
+                  [
+                    "13",
+                    "composite witness"
+                  ]
+                ]
+              }
+            },
+            "n is composite with no cheap structural flaw (not even, not a perfect square)."
+          ],
+          "time_ms": 0.225
+        },
+        {
+          "attack": "shared_prime",
+          "week": 2,
+          "broken": false,
+          "factors": null,
+          "private_key": null,
+          "steps": [
+            "Compute gcd(n_i, n_j) for every pair (W2 Euclid). A gcd strictly between 1 and n is a shared prime, which factors both keys instantly.",
+            {
+              "table": {
+                "headers": [
+                  "pair",
+                  "gcd"
+                ],
+                "rows": [
+                  [
+                    "key-9 x key-1",
+                    "1"
+                  ],
+                  [
+                    "key-9 x key-2",
+                    "1"
+                  ],
+                  [
+                    "key-9 x key-3",
+                    "1"
+                  ],
+                  [
+                    "key-9 x key-4",
+                    "1"
+                  ],
+                  [
+                    "key-9 x key-5",
+                    "1"
+                  ],
+                  [
+                    "key-9 x key-6",
+                    "1"
+                  ],
+                  [
+                    "key-9 x key-7",
+                    "1"
+                  ],
+                  [
+                    "key-9 x key-8",
+                    "1"
+                  ]
+                ]
+              }
+            },
+            "All gcds are 1: this key shares no prime with the others in the batch."
+          ],
+          "time_ms": 0.003
+        }
+      ]
+    }
+  ],
+  "batch": [
+    {
+      "attack": "shared_prime",
+      "week": 2,
+      "broken": false,
+      "factors": null,
+      "private_key": null,
+      "steps": [
+        "Compute gcd(n_i, n_j) for every pair (W2 Euclid). A gcd strictly between 1 and n is a shared prime, which factors both keys instantly.",
+        {
+          "table": {
+            "headers": [
+              "pair",
+              "gcd"
+            ],
+            "rows": [
+              [
+                "key-1 x key-2",
+                "1"
+              ],
+              [
+                "key-1 x key-3",
+                "1"
+              ],
+              [
+                "key-1 x key-4",
+                "1"
+              ],
+              [
+                "key-1 x key-5",
+                "1"
+              ],
+              [
+                "key-1 x key-6",
+                "1"
+              ],
+              [
+                "key-1 x key-7",
+                "1"
+              ],
+              [
+                "key-1 x key-8",
+                "1"
+              ],
+              [
+                "key-1 x key-9",
+                "1"
+              ]
+            ]
+          }
+        },
+        "All gcds are 1: this key shares no prime with the others in the batch."
+      ],
+      "time_ms": 0.003
+    },
+    {
+      "attack": "shared_prime",
+      "week": 2,
+      "broken": false,
+      "factors": null,
+      "private_key": null,
+      "steps": [
+        "Compute gcd(n_i, n_j) for every pair (W2 Euclid). A gcd strictly between 1 and n is a shared prime, which factors both keys instantly.",
+        {
+          "table": {
+            "headers": [
+              "pair",
+              "gcd"
+            ],
+            "rows": [
+              [
+                "key-2 x key-1",
+                "1"
+              ],
+              [
+                "key-2 x key-3",
+                "1"
+              ],
+              [
+                "key-2 x key-4",
+                "1"
+              ],
+              [
+                "key-2 x key-5",
+                "1"
+              ],
+              [
+                "key-2 x key-6",
+                "1"
+              ],
+              [
+                "key-2 x key-7",
+                "1"
+              ],
+              [
+                "key-2 x key-8",
+                "1"
+              ],
+              [
+                "key-2 x key-9",
+                "1"
+              ]
+            ]
+          }
+        },
+        "All gcds are 1: this key shares no prime with the others in the batch."
+      ],
+      "time_ms": 0.003
+    },
+    {
+      "attack": "shared_prime",
+      "week": 2,
+      "broken": false,
+      "factors": null,
+      "private_key": null,
+      "steps": [
+        "Compute gcd(n_i, n_j) for every pair (W2 Euclid). A gcd strictly between 1 and n is a shared prime, which factors both keys instantly.",
+        {
+          "table": {
+            "headers": [
+              "pair",
+              "gcd"
+            ],
+            "rows": [
+              [
+                "key-3 x key-1",
+                "1"
+              ],
+              [
+                "key-3 x key-2",
+                "1"
+              ],
+              [
+                "key-3 x key-4",
+                "1"
+              ],
+              [
+                "key-3 x key-5",
+                "1"
+              ],
+              [
+                "key-3 x key-6",
+                "1"
+              ],
+              [
+                "key-3 x key-7",
+                "1"
+              ],
+              [
+                "key-3 x key-8",
+                "1"
+              ],
+              [
+                "key-3 x key-9",
+                "1"
+              ]
+            ]
+          }
+        },
+        "All gcds are 1: this key shares no prime with the others in the batch."
+      ],
+      "time_ms": 0.003
+    },
+    {
+      "attack": "shared_prime",
+      "week": 2,
+      "broken": false,
+      "factors": null,
+      "private_key": null,
+      "steps": [
+        "Compute gcd(n_i, n_j) for every pair (W2 Euclid). A gcd strictly between 1 and n is a shared prime, which factors both keys instantly.",
+        {
+          "table": {
+            "headers": [
+              "pair",
+              "gcd"
+            ],
+            "rows": [
+              [
+                "key-4 x key-1",
+                "1"
+              ],
+              [
+                "key-4 x key-2",
+                "1"
+              ],
+              [
+                "key-4 x key-3",
+                "1"
+              ],
+              [
+                "key-4 x key-5",
+                "1"
+              ],
+              [
+                "key-4 x key-6",
+                "1"
+              ],
+              [
+                "key-4 x key-7",
+                "1"
+              ],
+              [
+                "key-4 x key-8",
+                "1"
+              ],
+              [
+                "key-4 x key-9",
+                "1"
+              ]
+            ]
+          }
+        },
+        "All gcds are 1: this key shares no prime with the others in the batch."
+      ],
+      "time_ms": 0.003
+    },
+    {
+      "attack": "shared_prime",
+      "week": 2,
+      "broken": false,
+      "factors": null,
+      "private_key": null,
+      "steps": [
+        "Compute gcd(n_i, n_j) for every pair (W2 Euclid). A gcd strictly between 1 and n is a shared prime, which factors both keys instantly.",
+        {
+          "table": {
+            "headers": [
+              "pair",
+              "gcd"
+            ],
+            "rows": [
+              [
+                "key-5 x key-1",
+                "1"
+              ],
+              [
+                "key-5 x key-2",
+                "1"
+              ],
+              [
+                "key-5 x key-3",
+                "1"
+              ],
+              [
+                "key-5 x key-4",
+                "1"
+              ],
+              [
+                "key-5 x key-6",
+                "1"
+              ],
+              [
+                "key-5 x key-7",
+                "1"
+              ],
+              [
+                "key-5 x key-8",
+                "1"
+              ],
+              [
+                "key-5 x key-9",
+                "1"
+              ]
+            ]
+          }
+        },
+        "All gcds are 1: this key shares no prime with the others in the batch."
+      ],
+      "time_ms": 0.003
+    },
+    {
+      "attack": "shared_prime",
+      "week": 2,
+      "broken": false,
+      "factors": null,
+      "private_key": null,
+      "steps": [
+        "Compute gcd(n_i, n_j) for every pair (W2 Euclid). A gcd strictly between 1 and n is a shared prime, which factors both keys instantly.",
+        {
+          "table": {
+            "headers": [
+              "pair",
+              "gcd"
+            ],
+            "rows": [
+              [
+                "key-6 x key-1",
+                "1"
+              ],
+              [
+                "key-6 x key-2",
+                "1"
+              ],
+              [
+                "key-6 x key-3",
+                "1"
+              ],
+              [
+                "key-6 x key-4",
+                "1"
+              ],
+              [
+                "key-6 x key-5",
+                "1"
+              ],
+              [
+                "key-6 x key-7",
+                "1"
+              ],
+              [
+                "key-6 x key-8",
+                "1"
+              ],
+              [
+                "key-6 x key-9",
+                "1"
+              ]
+            ]
+          }
+        },
+        "All gcds are 1: this key shares no prime with the others in the batch."
+      ],
+      "time_ms": 0.003
+    },
+    {
+      "attack": "shared_prime",
+      "week": 2,
+      "broken": true,
+      "factors": [
+        "12156271914479095157",
+        "14033769817481790247"
+      ],
+      "private_key": "2450102838682362598622778617676567329",
+      "steps": [
+        "Compute gcd(n_i, n_j) for every pair (W2 Euclid). A gcd strictly between 1 and n is a shared prime, which factors both keys instantly.",
+        {
+          "table": {
+            "headers": [
+              "pair",
+              "gcd"
+            ],
+            "rows": [
+              [
+                "key-7 x key-1",
+                "1"
+              ],
+              [
+                "key-7 x key-2",
+                "1"
+              ],
+              [
+                "key-7 x key-3",
+                "1"
+              ],
+              [
+                "key-7 x key-4",
+                "1"
+              ],
+              [
+                "key-7 x key-5",
+                "1"
+              ],
+              [
+                "key-7 x key-6",
+                "1"
+              ],
+              [
+                "key-7 x key-8",
+                "14033769817481790247"
+              ],
+              [
+                "key-7 x key-9",
+                "1"
+              ]
+            ]
+          }
+        },
+        "Shared prime 14033769817481790247 found. n = 12156271914479095157 x 14033769817481790247"
+      ],
+      "time_ms": 0.003
+    },
+    {
+      "attack": "shared_prime",
+      "week": 2,
+      "broken": true,
+      "factors": [
+        "11692451252687664787",
+        "14033769817481790247"
+      ],
+      "private_key": "25758722181887612155480997612923441217",
+      "steps": [
+        "Compute gcd(n_i, n_j) for every pair (W2 Euclid). A gcd strictly between 1 and n is a shared prime, which factors both keys instantly.",
+        {
+          "table": {
+            "headers": [
+              "pair",
+              "gcd"
+            ],
+            "rows": [
+              [
+                "key-8 x key-1",
+                "1"
+              ],
+              [
+                "key-8 x key-2",
+                "1"
+              ],
+              [
+                "key-8 x key-3",
+                "1"
+              ],
+              [
+                "key-8 x key-4",
+                "1"
+              ],
+              [
+                "key-8 x key-5",
+                "1"
+              ],
+              [
+                "key-8 x key-6",
+                "1"
+              ],
+              [
+                "key-8 x key-7",
+                "14033769817481790247"
+              ],
+              [
+                "key-8 x key-9",
+                "1"
+              ]
+            ]
+          }
+        },
+        "Shared prime 14033769817481790247 found. n = 11692451252687664787 x 14033769817481790247"
+      ],
+      "time_ms": 0.003
+    },
+    {
+      "attack": "shared_prime",
+      "week": 2,
+      "broken": false,
+      "factors": null,
+      "private_key": null,
+      "steps": [
+        "Compute gcd(n_i, n_j) for every pair (W2 Euclid). A gcd strictly between 1 and n is a shared prime, which factors both keys instantly.",
+        {
+          "table": {
+            "headers": [
+              "pair",
+              "gcd"
+            ],
+            "rows": [
+              [
+                "key-9 x key-1",
+                "1"
+              ],
+              [
+                "key-9 x key-2",
+                "1"
+              ],
+              [
+                "key-9 x key-3",
+                "1"
+              ],
+              [
+                "key-9 x key-4",
+                "1"
+              ],
+              [
+                "key-9 x key-5",
+                "1"
+              ],
+              [
+                "key-9 x key-6",
+                "1"
+              ],
+              [
+                "key-9 x key-7",
+                "1"
+              ],
+              [
+                "key-9 x key-8",
+                "1"
+              ]
+            ]
+          }
+        },
+        "All gcds are 1: this key shares no prime with the others in the batch."
+      ],
+      "time_ms": 0.003
+    }
+  ],
+  "keygen": {
+    "weak": {
+      "kind": "close_primes",
+      "bits": 95,
+      "n": "19807040628630542168052730073",
+      "e": "65537",
+      "p": "140737488355333",
+      "q": "140737488355781",
+      "d": "1740675503922913567324890233",
+      "why_weak": "p and q differ by only ~400, so Fermat finds a = (p+q)/2 almost immediately.",
+      "audit": {
+        "verdict": "BROKEN",
+        "results": [
+          {
+            "attack": "trial_division",
+            "week": 3,
+            "broken": false,
+            "factors": null,
+            "private_key": null,
+            "steps": [
+              "Divide n by 2, then every odd d up to 100000. A hit means d | n (W1 divisibility, W3 primes).",
+              {
+                "table": {
+                  "headers": [
+                    "d",
+                    "n mod d"
+                  ],
+                  "rows": [
+                    [
+                      "2",
+                      "1"
+                    ],
+                    [
+                      "3",
+                      "2"
+                    ],
+                    [
+                      "5",
+                      "3"
+                    ],
+                    [
+                      "7",
+                      "4"
+                    ],
+                    [
+                      "9",
+                      "8"
+                    ]
+                  ]
+                }
+              },
+              "No divisor up to 100000 (50000 candidates tried). Smallest prime factor is larger than that."
+            ],
+            "time_ms": 5.784
+          },
+          {
+            "attack": "fermat",
+            "week": 12,
+            "broken": true,
+            "factors": [
+              "140737488355333",
+              "140737488355781"
+            ],
+            "private_key": "1740675503922913567324890233",
+            "steps": [
+              "If p and q are close, n = a^2 - b^2 with a = (p+q)/2 near sqrt(n). Try a = ceil(sqrt n), a+1, ... until a^2 - n is a perfect square (W12).",
+              {
+                "table": {
+                  "headers": [
+                    "iter",
+                    "a",
+                    "a^2 - n",
+                    "square?"
+                  ],
+                  "rows": [
+                    [
+                      "1",
+                      "140737488355557",
+                      "50176",
+                      "yes"
+                    ]
+                  ]
+                }
+              },
+              "b = 224, so p = a - b, q = a + b.",
+              "n = 140737488355333 x 140737488355781"
+            ],
+            "time_ms": 0.022
+          },
+          {
+            "attack": "pollard_rho",
+            "week": 12,
+            "broken": false,
+            "factors": null,
+            "private_key": null,
+            "steps": [
+              "Walk x -> x^2 + c (mod n) with a tortoise and a hare. When the walks collide mod a hidden prime p, gcd(|x - y|, n) reveals p (W12, W10 cost ~ sqrt(p)).",
+              "No factor in 20000 iterations per attempt. Expected cost ~ sqrt(smallest prime), which is too big here."
+            ],
+            "time_ms": 69.787
+          },
+          {
+            "attack": "wiener",
+            "week": 5,
+            "broken": false,
+            "factors": null,
+            "private_key": null,
+            "steps": [
+              "If d < n^(1/4)/3 then k/d is a convergent of the continued fraction of e/n. For each convergent k/d: phi = (e*d - 1)/k, then solve x^2 - (n - phi + 1)x + n = 0 (W5, W7).",
+              "Continued fraction of e/n starts [0, 302226843288990069244132, 1, 3, 1, 1, 3, 5, ...]",
+              {
+                "table": {
+                  "headers": [
+                    "i",
+                    "k/d",
+                    "k | e*d-1 ?",
+                    "phi candidate",
+                    "disc square?"
+                  ],
+                  "rows": [
+                    [
+                      "1",
+                      "1/302226843288990069244132",
+                      "yes",
+                      "19807040628630542168052678883",
+                      "no"
+                    ],
+                    [
+                      "2",
+                      "1/302226843288990069244133",
+                      "yes",
+                      "19807040628630542168052744420",
+                      "no"
+                    ],
+                    [
+                      "3",
+                      "4/1208907373155960276976531",
+                      "no",
+                      "-",
+                      "-"
+                    ],
+                    [
+                      "4",
+                      "5/1511134216444950346220664",
+                      "no",
+                      "-",
+                      "-"
+                    ],
+                    [
+                      "5",
+                      "9/2720041589600910623197195",
+                      "no",
+                      "-",
+                      "-"
+                    ],
+                    [
+                      "6",
+                      "32/9671258985247682215812249",
+                      "no",
+                      "-",
+                      "-"
+                    ],
+                    [
+                      "7",
+                      "169/51076336515839321702258440",
+                      "no",
+                      "-",
+                      "-"
+                    ],
+                    [
+                      "8",
+                      "1046/316129278080283612429362889",
+                      "no",
+                      "-",
+                      "-"
+                    ],
+                    [
+                      "9",
+                      "1215/367205614596122934131621329",
+                      "no",
+                      "-",
+                      "-"
+                    ],
+                    [
+                      "10",
+                      "2261/683334892676406546560984218",
+                      "no",
+                      "-",
+                      "-"
+                    ],
+                    [
+                      "11",
+                      "3476/1050540507272529480692605547",
+                      "no",
+                      "-",
+                      "-"
+                    ],
+                    [
+                      "12",
+                      "5737/1733875399948936027253589765",
+                      "no",
+                      "-",
+                      "-"
+                    ]
+                  ]
+                }
+              },
+              "No convergent gives a valid phi. d is not small enough for Wiener."
+            ],
+            "time_ms": 0.042
+          },
+          {
+            "attack": "phi_leak",
+            "week": 7,
+            "broken": true,
+            "factors": [
+              "140737488355333",
+              "140737488355781"
+            ],
+            "private_key": "1740675503922913567324890233",
+            "steps": [
+              "phi(n) = n - (p+q) + 1, so p+q = s is close to 2*sqrt(n) when p, q are close. Guess s upward from ceil(2*sqrt(n)); a valid s makes s^2 - 4n a perfect square (W6/W7).",
+              {
+                "table": {
+                  "headers": [
+                    "k",
+                    "s guess",
+                    "phi guess",
+                    "s^2-4n square?"
+                  ],
+                  "rows": [
+                    [
+                      "0",
+                      "281474976711114",
+                      "19807040628630260693076018960",
+                      "yes"
+                    ]
+                  ]
+                }
+              },
+              "phi(n) = 19807040628630260693076018960. Roots of x^2 - s*x + n are p and q.",
+              "n = 140737488355333 x 140737488355781"
+            ],
+            "time_ms": 0.021
+          },
+          {
+            "attack": "bad_modulus",
+            "week": 11,
+            "broken": false,
+            "factors": null,
+            "private_key": null,
+            "steps": [
+              "A good modulus is a product of two distinct large odd primes. Check the cheap structural flaws first (W11 primality).",
+              "isqrt(n) = 140737488355556; 140737488355556^2 != n.",
+              {
+                "table": {
+                  "headers": [
+                    "Miller-Rabin base",
+                    "result"
+                  ],
+                  "rows": [
+                    [
+                      "2",
+                      "composite witness"
+                    ],
+                    [
+                      "3",
+                      "composite witness"
+                    ],
+                    [
+                      "5",
+                      "composite witness"
+                    ],
+                    [
+                      "7",
+                      "composite witness"
+                    ],
+                    [
+                      "11",
+                      "composite witness"
+                    ],
+                    [
+                      "13",
+                      "composite witness"
+                    ]
+                  ]
+                }
+              },
+              "n is composite with no cheap structural flaw (not even, not a perfect square)."
+            ],
+            "time_ms": 0.128
+          }
+        ]
+      }
+    },
+    "strong": {
+      "kind": "hardened",
+      "bits": 1024,
+      "n": "141763041564331046109174011831150019609254079802915690202749844573147201153755560583885048200760439459365780643591636312300268949536440539830924246289306668510341918893649461975799149921146113625485553844850604787144646283144196535435628933719423281454257909883611861138102046170911673233083626926682286919241",
+      "e": "65537",
+      "p": "11196854908907846958682962349588242745547705583236544398644880146014620136659722031157983799547715823695723046077545842431907084865017422194968507934422581",
+      "q": "12660969773891511715029690678009836252349313759558722314002304065815999661397338327732018041495876138540310776538192771828002605727924072343631010229217861",
+      "d": "6683003571495170415285999790239552361013945439295331960051662149640156481446900105313670913661891995844844097035392831052188777836036282860592215162780221004717711014772054028692236480510734507207879249099621800830290679506183611072589767056283568106374347302174593941193333384856731138362742692542989716893",
+      "why_strong": "Independent random 512-bit primes, far apart, gcd(e, phi) = 1, e = 65537, no small d.",
+      "audit": {
+        "verdict": "SAFE",
+        "results": [
+          {
+            "attack": "trial_division",
+            "week": 3,
+            "broken": false,
+            "factors": null,
+            "private_key": null,
+            "steps": [
+              "Divide n by 2, then every odd d up to 100000. A hit means d | n (W1 divisibility, W3 primes).",
+              {
+                "table": {
+                  "headers": [
+                    "d",
+                    "n mod d"
+                  ],
+                  "rows": [
+                    [
+                      "2",
+                      "1"
+                    ],
+                    [
+                      "3",
+                      "1"
+                    ],
+                    [
+                      "5",
+                      "1"
+                    ],
+                    [
+                      "7",
+                      "3"
+                    ],
+                    [
+                      "9",
+                      "4"
+                    ]
+                  ]
+                }
+              },
+              "No divisor up to 100000 (50000 candidates tried). Smallest prime factor is larger than that."
+            ],
+            "time_ms": 16.46
+          },
+          {
+            "attack": "fermat",
+            "week": 12,
+            "broken": false,
+            "factors": null,
+            "private_key": null,
+            "steps": [
+              "If p and q are close, n = a^2 - b^2 with a = (p+q)/2 near sqrt(n). Try a = ceil(sqrt n), a+1, ... until a^2 - n is a perfect square (W12).",
+              {
+                "table": {
+                  "headers": [
+                    "iter",
+                    "a",
+                    "a^2 - n",
+                    "square?"
+                  ],
+                  "rows": [
+                    [
+                      "1",
+                      "11906428581414791575861969208067093845388253110945909317776957741972924179947291618181517780532635538447022828017806818221368435549224374064700750828194165",
+                      "5680085084131839288353308835065911024500356339323392053116189691875496846814715390734954556420681876224597834643582765064268669129654404301226392653127984",
+                      "no"
+                    ],
+                    [
+                      "2",
+                      "11906428581414791575861969208067093845388253110945909317776957741972924179947291618181517780532635538447022828017806818221368435549224374064700750828194166",
+                      "29492942246961422440077247251200098715276862561215210688670105175821345206709298627097990117485952953118643490679196401507005540228103152430627894309516315",
+                      "no"
+                    ],
+                    [
+                      "3",
+                      "11906428581414791575861969208067093845388253110945909317776957741972924179947291618181517780532635538447022828017806818221368435549224374064700750828194167",
+                      "53305799409791005591801185667334286406053368783107029324224020659767193566603881863461025678551224030012689146714810037949742411326551900560029395965904648",
+                      "no"
+                    ],
+                    [
+                      "4",
+                      "11906428581414791575861969208067093845388253110945909317776957741972924179947291618181517780532635538447022828017806818221368435549224374064700750828194168",
+                      "77118656572620588743525124083468474096829875004998847959777936143713041926498465099824061239616495106906734802750423674392479282425000648689430897622292983",
+                      "no"
+                    ]
+                  ]
+                }
+              },
+              "No square found in 10000 iterations: p and q are not close enough."
+            ],
+            "time_ms": 13.849
+          },
+          {
+            "attack": "pollard_rho",
+            "week": 12,
+            "broken": false,
+            "factors": null,
+            "private_key": null,
+            "steps": [
+              "Walk x -> x^2 + c (mod n) with a tortoise and a hare. When the walks collide mod a hidden prime p, gcd(|x - y|, n) reveals p (W12, W10 cost ~ sqrt(p)).",
+              "No factor in 20000 iterations per attempt. Expected cost ~ sqrt(smallest prime), which is too big here."
+            ],
+            "time_ms": 1063.152
+          },
+          {
+            "attack": "wiener",
+            "week": 5,
+            "broken": false,
+            "factors": null,
+            "private_key": null,
+            "steps": [
+              "If d < n^(1/4)/3 then k/d is a convergent of the continued fraction of e/n. For each convergent k/d: phi = (e*d - 1)/k, then solve x^2 - (n - phi + 1)x + n = 0 (W5, W7).",
+              "Continued fraction of e/n starts [0, 2163099341811969515070479451777622100634055263483462627260171270780585030650709684359751715836251879997036493028238038242523596587217000165264266693460284549343758775861718753922198909335888332170919539265614916568421598229155996390369240790994755351240641315342659278546501154628861150694777407062915405, 3, 80, 1, 7, 6, 1, ...]",
+              {
+                "table": {
+                  "headers": [
+                    "i",
+                    "k/d",
+                    "k | e*d-1 ?",
+                    "phi candidate",
+                    "disc square?"
+                  ],
+                  "rows": [
+                    [
+                      "1",
+                      "1/2163099341811969515070479451777622100634055263483462627260171270780585030650709684359751715836251879997036493028238038242523596587217000165264266693460284549343758775861718753922198909335888332170919539265614916568421598229155996390369240790994755351240641315342659278546501154628861150694777407062915405",
+                      "yes",
+                      "141763041564331046109174011831150019609254079802915690202749844573147201153755560583885048200760439459365780643591636312300268949536440539830924246289306668510341918893649461975799149921146113625485553844850604787144646283144196535435628933719423281454257909883611861138102046170911673233083626926682286897484",
+                      "no"
+                    ],
+                    [
+                      "2",
+                      "3/6489298025435908545211438355332866301902165790450387881780513812341755091952129053079255147508755639991109479084714114727570789761651000495792800080380853648031276327585156261766596728007664996512758617796844749705264794687467989171107722372984266053721923946027977835639503463886583452084332221188746216",
+                      "no",
+                      "-",
+                      "-"
+                    ],
+                    [
+                      "3",
+                      "241/521306941376684653131985547878406926252807318499514493169701276258120992386821033930700163516536703079285794819805367216448186777519297039828688273123928576391845864982674219695249937149949088053191608963013194892989605173226595130078987030629736039648994556997580886129706778265555537317441355102162612685",
+                      "no",
+                      "-",
+                      "-"
+                    ],
+                    [
+                      "4",
+                      "244/527796239402120561677196986233739792554709484289964881051481790070462747478773162983779418664045458719276904298890081331175757567280948040324481073204309430039877141310259375957016533877956753049704367580810039642694869967914063119250094753002720305702716480943608863965346281729442120769525687323351358901",
+                      "no",
+                      "-",
+                      "-"
+                    ],
+                    [
+                      "5",
+                      "1949/4215880617191528584872364451514585474135773708529268660530073806751360224738233174817156094164854914114224124912035936534678489748485933322100055785554094586670985854154489851394365674295646359401122182028683472391853694948625036964829650301648778179568009923602842933887130750371650382704121166365622124992",
+                      "no",
+                      "-",
+                      "-"
+                    ],
+                    [
+                      "6",
+                      "11938/25823079942551292070911383695321252637369351735465576844231924630578624095908172211886715983653174943404621653771105700539246696058196547972924815786528876950065792266237198484323210579651834909456437459752910873993817039659664284908227996562895389383110776022560666467288130783959344416994252685517084108853",
+                      "no",
+                      "-",
+                      "-"
+                    ],
+                    [
+                      "7",
+                      "13887/30038960559742820655783748146835838111505125443994845504761998437329984320646405386703872077818029857518845778683141637073925185806682481295024871572082971536736778120391688335717576253947481268857559641781594346385670734608289321873057646864544167562678785946163509401175261534330994799698373851882706233845",
+                      "no",
+                      "-",
+                      "-"
+                    ],
+                    [
+                      "8",
+                      "25825/55862040502294112726695131842157090748874477179460422348993923067908608416554577598590588061471204800923467432454247337613171881864879029267949687358611848486802570386628886820040786833599316178313997101534505220379487774267953606781285643427439556945789561968724175868463392318290339216692626537399790342698",
+                      "yes",
+                      "141763041564331046109174011831150019609254079802915690202749844573147201153755560583885048200760439459365780643591636312300268949536440539830924246289306668510341918893649461975799149921146113625485553844850604787144646283144196535435628933719423281454257909883611861138102046170911673233083626926682286919241",
+                      "no"
+                    ],
+                    [
+                      "9",
+                      "65537/141763041564331046109174011831150019609254079802915690202749844573147201153755560583885048200760439459365780643591636312300268949536440539830924246289306668510341918893649461975799149921146113625485553844850604787144646283144196535435628933719423281454257909883611861138102046170911673233083626926682286919241",
+                      "no",
+                      "-",
+                      "-"
+                    ]
+                  ]
+                }
+              },
+              "No convergent gives a valid phi. d is not small enough for Wiener."
+            ],
+            "time_ms": 0.058
+          },
+          {
+            "attack": "phi_leak",
+            "week": 7,
+            "broken": false,
+            "factors": null,
+            "private_key": null,
+            "steps": [
+              "phi(n) = n - (p+q) + 1, so p+q = s is close to 2*sqrt(n) when p, q are close. Guess s upward from ceil(2*sqrt(n)); a valid s makes s^2 - 4n a perfect square (W6/W7).",
+              {
+                "table": {
+                  "headers": [
+                    "k",
+                    "s guess",
+                    "phi guess",
+                    "s^2-4n square?"
+                  ],
+                  "rows": [
+                    [
+                      "0",
+                      "23812857162829583151723938416134187690776506221891818635553915483945848359894583236363035561065271076894045656035613636442736871098448748129401501656388330",
+                      "141763041564331046109174011831150019609254079802915690202749844573147201153755560583885048200760439459365780643591636312300268949536440539830924246289306644697484756064066310251860733786958422848979331953031969233229162337295836640852392570683862216183181015837955825524465603434040574784335497525180630530912",
+                      "no"
+                    ],
+                    [
+                      "1",
+                      "23812857162829583151723938416134187690776506221891818635553915483945848359894583236363035561065271076894045656035613636442736871098448748129401501656388331",
+                      "141763041564331046109174011831150019609254079802915690202749844573147201153755560583885048200760439459365780643591636312300268949536440539830924246289306644697484756064066310251860733786958422848979331953031969233229162337295836640852392570683862216183181015837955825524465603434040574784335497525180630530911",
+                      "no"
+                    ],
+                    [
+                      "2",
+                      "23812857162829583151723938416134187690776506221891818635553915483945848359894583236363035561065271076894045656035613636442736871098448748129401501656388332",
+                      "141763041564331046109174011831150019609254079802915690202749844573147201153755560583885048200760439459365780643591636312300268949536440539830924246289306644697484756064066310251860733786958422848979331953031969233229162337295836640852392570683862216183181015837955825524465603434040574784335497525180630530910",
+                      "no"
+                    ],
+                    [
+                      "3",
+                      "23812857162829583151723938416134187690776506221891818635553915483945848359894583236363035561065271076894045656035613636442736871098448748129401501656388333",
+                      "141763041564331046109174011831150019609254079802915690202749844573147201153755560583885048200760439459365780643591636312300268949536440539830924246289306644697484756064066310251860733786958422848979331953031969233229162337295836640852392570683862216183181015837955825524465603434040574784335497525180630530909",
+                      "no"
+                    ]
+                  ]
+                }
+              },
+              "phi(n) is not within 5000 guesses of n - 2*sqrt(n). No leak."
+            ],
+            "time_ms": 7.222
+          },
+          {
+            "attack": "bad_modulus",
+            "week": 11,
+            "broken": false,
+            "factors": null,
+            "private_key": null,
+            "steps": [
+              "A good modulus is a product of two distinct large odd primes. Check the cheap structural flaws first (W11 primality).",
+              "isqrt(n) = 11906428581414791575861969208067093845388253110945909317776957741972924179947291618181517780532635538447022828017806818221368435549224374064700750828194164; 11906428581414791575861969208067093845388253110945909317776957741972924179947291618181517780532635538447022828017806818221368435549224374064700750828194164^2 != n.",
+              {
+                "table": {
+                  "headers": [
+                    "Miller-Rabin base",
+                    "result"
+                  ],
+                  "rows": [
+                    [
+                      "2",
+                      "composite witness"
+                    ],
+                    [
+                      "3",
+                      "composite witness"
+                    ],
+                    [
+                      "5",
+                      "composite witness"
+                    ],
+                    [
+                      "7",
+                      "composite witness"
+                    ],
+                    [
+                      "11",
+                      "composite witness"
+                    ],
+                    [
+                      "13",
+                      "composite witness"
+                    ]
+                  ]
+                }
+              },
+              "n is composite with no cheap structural flaw (not even, not a perfect square)."
+            ],
+            "time_ms": 23.633
+          }
+        ]
+      }
+    }
+  },
+  "toolkit": {
+    "gcd": {
+      "week": 2,
+      "input": {
+        "a": "252",
+        "b": "198"
+      },
+      "output": {
+        "gcd": "18",
+        "x": "4",
+        "y": "-5"
+      },
+      "steps": [
+        "Extended Euclid: keep r = a*x + b*y at every row.",
+        {
+          "table": {
+            "headers": [
+              "i",
+              "q",
+              "r",
+              "x",
+              "y"
+            ],
+            "rows": [
+              [
+                "-",
+                "-",
+                "252",
+                "1",
+                "0"
+              ],
+              [
+                "-",
+                "-",
+                "198",
+                "0",
+                "1"
+              ],
+              [
+                "1",
+                "1",
+                "54",
+                "1",
+                "-1"
+              ],
+              [
+                "2",
+                "3",
+                "36",
+                "-3",
+                "4"
+              ],
+              [
+                "3",
+                "1",
+                "18",
+                "4",
+                "-5"
+              ],
+              [
+                "4",
+                "2",
+                "0",
+                "-11",
+                "14"
+              ]
+            ]
+          }
+        },
+        "gcd = 18 = 252*(4) + 198*(-5)"
+      ]
+    },
+    "modinv": {
+      "week": 9,
+      "input": {
+        "a": "17",
+        "m": "3120"
+      },
+      "output": {
+        "inverse": "2753"
+      },
+      "steps": [
+        "a^-1 mod m exists iff gcd(a, m) = 1; read it from extended Euclid.",
+        {
+          "table": {
+            "headers": [
+              "i",
+              "q",
+              "r",
+              "x",
+              "y"
+            ],
+            "rows": [
+              [
+                "-",
+                "-",
+                "17",
+                "1",
+                "0"
+              ],
+              [
+                "-",
+                "-",
+                "3120",
+                "0",
+                "1"
+              ],
+              [
+                "1",
+                "0",
+                "17",
+                "1",
+                "0"
+              ],
+              [
+                "2",
+                "183",
+                "9",
+                "-183",
+                "1"
+              ],
+              [
+                "3",
+                "1",
+                "8",
+                "184",
+                "-1"
+              ],
+              [
+                "4",
+                "1",
+                "1",
+                "-367",
+                "2"
+              ],
+              [
+                "5",
+                "8",
+                "0",
+                "3120",
+                "-17"
+              ]
+            ]
+          }
+        },
+        "17 * 2753 = 46801 = 1 (mod 3120)"
+      ]
+    },
+    "modpow": {
+      "week": 10,
+      "input": {
+        "base": "5",
+        "exp": "117",
+        "mod": "19"
+      },
+      "output": {
+        "result": "1"
+      },
+      "steps": [
+        "Square-and-multiply over the bits of 117 = 1110101 in binary.",
+        {
+          "table": {
+            "headers": [
+              "bit",
+              "after square",
+              "after multiply"
+            ],
+            "rows": [
+              [
+                "1",
+                "1",
+                "5"
+              ],
+              [
+                "1",
+                "6",
+                "11"
+              ],
+              [
+                "1",
+                "7",
+                "16"
+              ],
+              [
+                "0",
+                "9",
+                "9"
+              ],
+              [
+                "1",
+                "5",
+                "6"
+              ],
+              [
+                "0",
+                "17",
+                "17"
+              ],
+              [
+                "1",
+                "4",
+                "1"
+              ]
+            ]
+          }
+        },
+        "5^117 mod 19 = 1"
+      ]
+    },
+    "diophantine": {
+      "week": 4,
+      "input": {
+        "a": "12",
+        "b": "18",
+        "c": "30"
+      },
+      "output": {
+        "solvable": true,
+        "x0": "-5",
+        "y0": "5",
+        "general": "x = -5 + 3t, y = 5 - 2t"
+      },
+      "steps": [
+        "ax + by = c is solvable iff gcd(a, b) | c.",
+        {
+          "table": {
+            "headers": [
+              "i",
+              "q",
+              "r",
+              "x",
+              "y"
+            ],
+            "rows": [
+              [
+                "-",
+                "-",
+                "12",
+                "1",
+                "0"
+              ],
+              [
+                "-",
+                "-",
+                "18",
+                "0",
+                "1"
+              ],
+              [
+                "1",
+                "0",
+                "12",
+                "1",
+                "0"
+              ],
+              [
+                "2",
+                "1",
+                "6",
+                "-1",
+                "1"
+              ],
+              [
+                "3",
+                "2",
+                "0",
+                "3",
+                "-2"
+              ]
+            ]
+          }
+        },
+        "gcd = 6 divides 30, scale the Bezout pair by 5.",
+        "Particular solution (-5, 5); general solution x = -5 + 3t, y = 5 - 2t."
+      ]
+    },
+    "crt": {
+      "week": 9,
+      "input": {
+        "remainders": [
+          "2",
+          "3",
+          "2"
+        ],
+        "moduli": [
+          "3",
+          "5",
+          "7"
+        ]
+      },
+      "output": {
+        "x": "23",
+        "modulus": "105"
+      },
+      "steps": [
+        "Chinese Remainder Theorem: x = sum r_i * M_i * (M_i^-1 mod m_i) mod M.",
+        {
+          "table": {
+            "headers": [
+              "m_i",
+              "r_i",
+              "M_i = M/m_i",
+              "M_i^-1 mod m_i",
+              "term"
+            ],
+            "rows": [
+              [
+                "3",
+                "2",
+                "35",
+                "2",
+                "140"
+              ],
+              [
+                "5",
+                "3",
+                "21",
+                "1",
+                "63"
+              ],
+              [
+                "7",
+                "2",
+                "15",
+                "1",
+                "30"
+              ]
+            ]
+          }
+        },
+        "sum = 233, x = 233 mod 105 = 23"
+      ]
+    },
+    "arith_functions": {
+      "week": 6,
+      "input": {
+        "n": "360"
+      },
+      "output": {
+        "factorization": "2^3 * 3^2 * 5",
+        "tau": "24",
+        "sigma": "1170",
+        "phi": "96"
+      },
+      "steps": [
+        "Factor n, then use the multiplicative formulas prime by prime (W6 tau/sigma, W7 phi).",
+        {
+          "table": {
+            "headers": [
+              "p",
+              "a",
+              "tau factor a+1",
+              "sigma factor",
+              "phi factor"
+            ],
+            "rows": [
+              [
+                "2",
+                "3",
+                "4",
+                "15",
+                "4"
+              ],
+              [
+                "3",
+                "2",
+                "3",
+                "13",
+                "6"
+              ],
+              [
+                "5",
+                "1",
+                "2",
+                "6",
+                "4"
+              ]
+            ]
+          }
+        },
+        "tau = 24, sigma = 1170, phi = 96"
+      ]
+    },
+    "primality": {
+      "week": 11,
+      "input": {
+        "n": "561"
+      },
+      "output": {
+        "fermat_base2": "passes",
+        "miller_rabin": "composite",
+        "factorization": "3 * 11 * 17"
+      },
+      "steps": [
+        "561 is a Carmichael number: it fools the Fermat test but not Miller-Rabin.",
+        "Fermat: 2^560 mod 561 = 1, so base 2 says 'probably prime'.",
+        {
+          "table": {
+            "headers": [
+              "Miller-Rabin base",
+              "result"
+            ],
+            "rows": [
+              [
+                "2",
+                "composite witness"
+              ],
+              [
+                "5",
+                "composite witness"
+              ],
+              [
+                "7",
+                "composite witness"
+              ]
+            ]
+          }
+        },
+        "Miller-Rabin finds a witness: 561 is composite (3 * 11 * 17)."
+      ]
+    }
+  },
+  "report": {
+    "sha256": "e4c70c5e0ea9bc2481d3f07bc461858fdab40296668ba374c0d2245091c5ec71",
+    "covers": "keys",
+    "week": 13
+  }
+}
