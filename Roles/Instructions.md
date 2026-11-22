@@ -1,6 +1,6 @@
 # Team Roles
 
-**Before you start:** read sections 6 (Project structure) and 7 (Shared contract) in [`README.md`](README.md). Every file already exists with a header comment. **Only edit the files listed under your name.**
+**Before you start:** read sections 6 (Project structure) and 7 (Shared contract) in [`README.md`](/README.md). Every file already exists with a header comment. **Only edit the files listed under your name.**
 
 **Done means:**
 1. Follows the shared contract
