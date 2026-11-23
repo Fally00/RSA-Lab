@@ -6,7 +6,12 @@ Purpose: Recover RSA factors using leaked phi(n) or sigma(n).
 """
 
 import math
+import sys
 import time
+from pathlib import Path
+
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from audit.contract import make_result, elapsed_time, derive_private_key, table
 
@@ -60,4 +65,52 @@ def run(n, e, phi=None, sigma=None):
             steps=steps + ["Discriminant is negative, no real roots exist."],
             time_ms=elapsed_time(start)
         )
+    root = math.isqrt(delta)
     
+    if root**2 != delta:
+            steps.append("Discriminant is not a perfect square.")
+            return make_result(
+                "phi_leak", week,
+                steps=steps,
+                time_ms=elapsed_time(start)
+            )
+    
+        # Recover p and q
+    if (S + root) % 2 != 0 or (S - root) % 2 != 0:
+            steps.append("The resulting roots are not integers.")
+            return make_result(
+                "phi_leak", week,
+                steps=steps,
+                time_ms=elapsed_time(start)
+            )
+    
+    p = (S + root) // 2
+    q = (S - root) // 2
+
+    if p <= 1 or q <= 1 or p == q or p * q != n:
+            steps.append("Recovered values do not form a valid factorization.")
+            return make_result(
+                "phi_leak", week,
+                steps=steps,
+                time_ms=elapsed_time(start)
+            )
+    
+    steps.append(f"Recovered factors: p = {p}, q = {q}")
+
+    # Derive the private exponent if possible
+    d = derive_private_key(e, p, q)
+
+    if d is not None:
+        steps.append(f"Recovered private exponent: d = {d}")
+    else:
+        steps.append("Factors recovered, but the private exponent could not be derived.")
+
+    return make_result(
+        "phi_leak",
+        week,
+        broken=True,
+        factors=[p, q],
+        private_key=d,
+        steps=steps,
+        time_ms=elapsed_time(start)
+    ) 
