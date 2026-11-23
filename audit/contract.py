@@ -64,9 +64,10 @@ def validate(r):
 
     # Validate execution time
     if r["time_ms"] is not None and (
-        isinstance(r["time_ms"], bool)
-        or not isinstance(r["time_ms"], (int, float))
-        or r["time_ms"] < 0
+    isinstance(r["time_ms"], bool)
+    or not isinstance(r["time_ms"], (int, float))
+    or not math.isfinite(r["time_ms"])
+    or r["time_ms"] < 0
     ):
         raise ValueError("Invalid execution time")
 
@@ -81,8 +82,9 @@ def validate(r):
         ):
             raise ValueError("broken result needs two distinct integer factors > 1")
 
-        if type(r["private_key"]) is not int or r["private_key"] <= 0:
-            raise ValueError("Successful attack needs a valid private key")
+        d = r["private_key"]
+        if d is not None and (type(d) is not int or d <= 0):
+            raise ValueError("Successful attack private_key must be a positive exact integer")
 
     elif r["factors"] is not None or r["private_key"] is not None:
         raise ValueError("Failed attack must have factors=None and private_key=None")
