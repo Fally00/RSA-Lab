@@ -18,6 +18,10 @@ def f(x, c, n):
     return (x * x + c) % n
 
 
+MAX_ITERATIONS = 1_000_000
+MAX_C_RETRIES  = 20
+
+
 def run(n, e):
     """Factor n with Pollard's rho, then recover the private key d."""
     print("\n[Step 1] Looking for a factor of n using Floyd cycle detection...")
@@ -27,17 +31,23 @@ def run(n, e):
     else:
         p = None
         c = 1
-        while p is None:
+        while p is None and c <= MAX_C_RETRIES:
             x, y, d = 2, 2, 1           # tortoise (x) and hare (y)
-            while d == 1:
+            iters = 0
+            while d == 1 and iters < MAX_ITERATIONS:
                 x = f(x, c, n)          # tortoise moves 1 step
                 y = f(f(y, c, n), c, n) # hare moves 2 steps
                 d = gcd(abs(x - y), n)  # check for a common factor
-            if d != n:
+                iters += 1
+            if d not in (1, n):
                 p = d                   # found a real factor
             else:
                 print(f"    c = {c} failed (cycle found, no factor). Trying c = {c + 1}")
                 c += 1
+
+        if p is None:
+            print("[-] Attack failed: no factor found within iteration limits.")
+            return None
 
     q = n // p
     print(f"[Step 2] Factors found: p = {p}, q = {q}")

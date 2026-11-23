@@ -9,7 +9,7 @@ from jinja2 import TemplateNotFound
 import config
 
 app = Flask(__name__ , template_folder="web/templates", static_folder="web/static")
-app.config["MAX_CONTENT_LENGHT"] = config.MAX_INPUT_CHARS *2
+app.config["MAX_CONTENT_LENGTH"] = config.MAX_INPUT_CHARS * 2
 
 
 ROUTES = {

@@ -33,6 +33,7 @@ def run(n, e, c=None, max_steps=10_000_000):
     if n % 2 == 0:
         print("n is even -> 2 is a factor. Fermat is not needed.")
         p, q = 2, n // 2
+        a, b, b2 = (p + q) // 2, (q - p) // 2, ((q - p) // 2) ** 2
     else:
         print("n is odd -> Fermat's method can be used.")
 

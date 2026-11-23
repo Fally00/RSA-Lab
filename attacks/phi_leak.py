@@ -24,7 +24,7 @@ def run(n, e, phi=None, sigma=None):
         raise ValueError("n must be a positive integer greater than 1")
     
     # If phi(n) is provided, compute the factors p and q.
-    if phi is not None and sigma is None:
+    if phi is None and sigma is None:
         return make_result(
             "phi_leak", 6,
             steps=["No phi(n) or sigma(n) value was provided."],
