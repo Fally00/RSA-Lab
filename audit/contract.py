@@ -22,11 +22,14 @@ def make_result( attack , week , broken = False , factors = None
     }
 
 #A steps entry that Explain mode renders as a table. Cells are stringified
-def table(headers , rows):
+def table(headers, rows):
     return {
-        "table" : {
+        "table": {
             "headers": [str(h) for h in headers],
-            "rows": [str(c) for c in rows]
+            "rows": [
+                [str(cell) for cell in row]
+                for row in rows
+            ]
         }
     }
 
@@ -43,21 +46,48 @@ def derive_private_key(e , p , q ):
 
 #Validate that the result dict has all required fields and that they are of the correct type.
 def validate(r):
-    missing = [ k for k in REQUIRED if k not in r]
+    missing = [k for k in REQUIRED if k not in r]
     if missing:
         raise ValueError(f"Missing required fields: {missing}")
-    if not isinstance(r["week"], int) or not 1 <= r["week"] <=14:
+
+    if type(r["week"]) is not int or not 1 <= r["week"] <= 14:
         raise ValueError(f"Week must be an integer, got {type(r['week'])}")
-    if not isinstance(r["steps"], list ):
-        raise ValueError(f"steps must be a list")
+
+    if not isinstance(r["steps"], list):
+        raise ValueError("steps must be a list")
+
+    if not isinstance(r["attack"], str) or not r["attack"].strip():
+        raise ValueError("Invalid attack name")
+
+    if type(r["broken"]) is not bool:
+        raise ValueError("broken must be boolean")
+
+    # Validate execution time
+    if r["time_ms"] is not None and (
+        isinstance(r["time_ms"], bool)
+        or not isinstance(r["time_ms"], (int, float))
+        or r["time_ms"] < 0
+    ):
+        raise ValueError("Invalid execution time")
+
     if r["broken"]:
         f = r["factors"]
-        if not (isinstance(f, (list, tuple)) and len(f) == 2
-                and all(isinstance(x, int) and x >= 2 for x in f)):
-            raise ValueError("broken result needs factors = [p, q] with both ints >= 2")
+
+        if not (
+            isinstance(f, (list, tuple))
+            and len(f) == 2
+            and all(type(x) is int and x > 1 for x in f)
+            and f[0] != f[1]
+        ):
+            raise ValueError("broken result needs two distinct integer factors > 1")
+
+        if type(r["private_key"]) is not int or r["private_key"] <= 0:
+            raise ValueError("Successful attack needs a valid private key")
+
     elif r["factors"] is not None or r["private_key"] is not None:
-        raise ValueError("Failed attack must have Factors = None and Private key = None")
-    return r 
+        raise ValueError("Failed attack must have factors=None and private_key=None")
+
+    return r
 
 #Recheck that the factors and private key are correct for the given n and e.
 def verify_breaking(n , e , r):
@@ -72,13 +102,19 @@ def verify_breaking(n , e , r):
     return True
 
 def verdict(results):
-    """
-    Given a list of result dicts, return a summary verdict.
-    If any attack is broken, the verdict is broken.
-    If all attacks are unbroken, the verdict is unbroken.
-    If any attack is missing required fields, the verdict is invalid.
-    """
-    return "broken" if any(r["broken"] for r in results)  else "Safe"
+    if not isinstance(results, list) or not results:
+        return "invalid"
+
+    try:
+        for result in results:
+            validate(result)
+    except (ValueError, TypeError, KeyError):
+        return "invalid"
+
+    if any(result["broken"] for result in results):
+        return "broken"
+
+    return "safe"
 
 #Convert results to a JSON-serializable format to be ready for josnify()
 def jsonify(r):
