@@ -1,8 +1,19 @@
-venv/
-.venv/
+# Python
 __pycache__/
-*.pyc
-.env
-.idea/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+
+# Editors / OS
 .vscode/
+.idea/
 .DS_Store
+Thumbs.db
+
+# Local secrets / scratch (never commit real keys)
+.env
+*.pem
+*.key
+scratch/

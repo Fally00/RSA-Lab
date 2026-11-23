@@ -1,2 +1,2 @@
-flask
-cryptography
+flask >= 3.0 
+cryptography >= 42.0
