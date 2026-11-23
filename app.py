@@ -55,6 +55,7 @@ def _page(name):
 </body>""")
 
 # Flask routes for the web pages.
+
 @app.get("/")
 def index():
     return _page("index")
@@ -74,3 +75,47 @@ def keygen_page():
 def toolkit_page():
     return _page("toolkit")
 
+# Flask routes for the JSON API.
+
+@app.get("/api/audit")
+def api_audit():
+    text = _body().get("input")
+    if not isinstance(text , str) or not text.strip():
+        return _error('Send JSON like {"input": "<public keys>"}.')
+    if len(text) > config.MAX_INPUT_CHARS:
+        return _error(f"Input too long (max {config.MAX_INPUT_CHARS} chars).", 413)
+    mock = _mock()
+    return jsonify({k: mock[k] for k in ("schema_version", "attack_registry", "keys", "batch", "report")})
+
+@app.get("/api/keygen")
+def api_keygen():
+    bits = _body().get("bits" , config.DEFAULT_KEY_BITS)
+    if isinstance(bits, bool) or not isinstance(bits, int) \
+            or not config.MIN_KEY_BITS <= bits <= config.MAX_KEY_BITS:
+        return _error(f"bits must be an integer from {config.MIN_KEY_BITS} to {config.MAX_KEY_BITS}.")
+    return jsonify(_mock()["keygen"])
+
+@app.get("/api/toolkit")
+def api_toolkit():
+    body = _body()
+    op = body.get("op")
+    toolkit = _mock()["toolkit"]
+    if op not in toolkit:
+        return _error(f"unknown toolkit operation '{op}'.")
+    return jsonify(toolkit[op])
+
+@app.get("/api/health")
+def api_health():
+    return jsonify({"ok": True, "mock": config.USE_MOCK})
+
+@app.errorhandler(404)
+def not_found(_):
+    if request.path.startswith("/api/"):
+        return _error("No such endpoint.", 404)
+    return _page("index"), 404
+
+
+# Run the Flask app.
+
+if __name__ == "__main__":
+    app.run(host=config.HOST, port=config.PORT, debug=config.DEBUG)
