@@ -1,15 +1,386 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Toolkit</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Firjar:wght@100..800&display=swap');
-    </style>
-    <!-- Toolkit Page -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Toolkit — RSA-Lab</title>
+  <meta name="description" content="Eleven exact number-theoretic operations for RSA: GCD, modular inverse, exponentiation, CRT, totient, primality, Fermat factorization, and continued fractions.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem("rsa-lab-theme");
+        var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.dataset.theme = theme;
+      } catch (e) {}
+      document.documentElement.classList.add("js");
+    })();
+  </script>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
-    
+<body class="page-toolkit has-rail" data-bg="quiet">
+  <a class="skip-link" href="#workspace">Skip to content</a>
+  <div class="grain" aria-hidden="true"></div>
+  <canvas id="math-canvas" class="math-canvas" aria-hidden="true"></canvas>
+
+  <header class="masthead">
+    <div class="masthead__inner">
+      <a class="brand" href="index.html" aria-label="RSA-Lab home">
+        <span class="brand__mark" aria-hidden="true"></span>
+        <span>RSA—LAB</span>
+        <span class="brand__suffix">/ Monograph IV</span>
+      </a>
+      <nav class="page-nav" aria-label="Primary">
+        <a href="index.html">Overview</a>
+        <a href="audit.html">Audit</a>
+        <a href="keygen.html">Keygen</a>
+        <a href="toolkit.html" aria-current="page">Toolkit</a>
+      </nav>
+      <div class="masthead__actions">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch to dark theme" aria-pressed="false">
+          <svg data-theme-icon="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg data-theme-icon="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        </button>
+        <a class="icon-btn masthead__github" href="https://github.com" target="_blank" rel="noopener" aria-label="GitHub repository">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.341-3.369-1.341-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+        </a>
+        <a class="btn btn-primary btn-sm masthead__enter" href="audit.html">
+          Open the Auditor
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <button class="icon-btn nav-toggle" type="button" data-mobile-toggle aria-label="Open menu" aria-expanded="false">
+          <svg class="nav-icon-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          <svg class="nav-icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="mobile-menu" data-mobile-menu>
+    <nav class="mobile-menu__pages" aria-label="Primary mobile">
+      <a href="index.html">Overview <span>01</span></a>
+      <a href="audit.html">Audit <span>02</span></a>
+      <a href="keygen.html">Keygen <span>03</span></a>
+      <a href="toolkit.html" aria-current="page">Toolkit <span>04</span></a>
+    </nav>
+    <nav class="mobile-menu__sections" aria-label="Page sections">
+      <a href="#workspace">01. Workspace</a>
+      <a href="#atlas">02. Atlas</a>
+      <a href="#method">03. Method</a>
+    </nav>
+    <a class="btn btn-primary btn-block mobile-menu__cta" href="audit.html">Open the Auditor</a>
+  </div>
+
+  <nav class="folio-rail" aria-label="Page index">
+    <div class="folio-rail__label">Toolkit — Folio</div>
+    <ul class="folio-rail__list">
+      <li><a href="#workspace">01. Workspace</a></li>
+      <li><a href="#atlas">02. Atlas</a></li>
+      <li><a href="#method">03. Method</a></li>
+    </ul>
+    <div class="folio-rail__mark" aria-hidden="true"></div>
+  </nav>
+
+  <main class="page-main" id="main">
+    <nav class="subindex" aria-label="Page index">
+      <ul>
+        <li><a href="#workspace">01. Workspace</a></li>
+        <li><a href="#atlas">02. Atlas</a></li>
+        <li><a href="#method">03. Method</a></li>
+      </ul>
+    </nav>
+
+    <div class="shell">
+      <header class="page-head">
+        <div class="page-head__copy">
+          <div class="page-head__rubric">
+            <span>04 / Mathematical Toolkit</span>
+            <span class="sep">/</span>
+            <span class="muted">ELEMENTARY &amp; MODULAR ARITHMETIC</span>
+          </div>
+          <h1>Mathematical Toolkit</h1>
+          <p>
+            Explore the number-theoretic operations underlying RSA through exact arbitrary-precision arithmetic. Every result is paired with its constructive, step-by-step derivation.
+          </p>
+        </div>
+        <div class="page-head__aside">
+          <span class="chip"><span class="status-dot"></span> Exact BigInt engine</span>
+          <span class="chip chip--plain">11 operations · step traces</span>
+        </div>
+      </header>
+    </div>
+
+    <!-- 01 — Workspace -->
+    <section id="workspace" data-spy aria-label="Toolkit workspace">
+      <div class="shell">
+        <div class="toolkit-workspace">
+          <!-- Column 1: operation index -->
+          <aside class="op-index" aria-label="Operation index">
+            <div class="op-index__head">
+              <span>Operation index</span>
+              <span>11</span>
+            </div>
+
+            <div class="op-group">
+              <div class="op-group__label">Arithmetic</div>
+              <button class="op-btn is-active" type="button" data-op="gcd"><span class="op-btn__num">01</span> GCD (Euclidean)</button>
+              <button class="op-btn" type="button" data-op="lcm"><span class="op-btn__num">02</span> LCM</button>
+              <button class="op-btn" type="button" data-op="egcd"><span class="op-btn__num">03</span> Extended Euclidean</button>
+            </div>
+
+            <div class="op-group">
+              <div class="op-group__label">Modular</div>
+              <button class="op-btn" type="button" data-op="modinv"><span class="op-btn__num">04</span> Modular Inverse</button>
+              <button class="op-btn" type="button" data-op="modexp"><span class="op-btn__num">05</span> Modular Exponentiation</button>
+              <button class="op-btn" type="button" data-op="crt"><span class="op-btn__num">06</span> Chinese Remainder</button>
+            </div>
+
+            <div class="op-group">
+              <div class="op-group__label">Structure</div>
+              <button class="op-btn" type="button" data-op="totient"><span class="op-btn__num">07</span> Euler's Totient</button>
+              <button class="op-btn" type="button" data-op="rsa-rel"><span class="op-btn__num">08</span> RSA Relationships</button>
+              <button class="op-btn" type="button" data-op="primality"><span class="op-btn__num">09</span> Miller–Rabin</button>
+            </div>
+
+            <div class="op-group">
+              <div class="op-group__label">Factorization</div>
+              <button class="op-btn" type="button" data-op="factor"><span class="op-btn__num">10</span> Fermat Factorization</button>
+              <button class="op-btn" type="button" data-op="cf"><span class="op-btn__num">11</span> Continued Fractions</button>
+            </div>
+          </aside>
+
+          <!-- Mobile operation picker -->
+          <div class="op-mobile">
+            <label class="field-label" for="op-select">Operation</label>
+            <select class="select" id="op-select" style="margin-top: 6px;">
+              <option value="gcd">01. GCD (Euclidean)</option>
+              <option value="lcm">02. LCM</option>
+              <option value="egcd">03. Extended Euclidean</option>
+              <option value="modinv">04. Modular Inverse</option>
+              <option value="modexp">05. Modular Exponentiation</option>
+              <option value="crt">06. Chinese Remainder</option>
+              <option value="totient">07. Euler's Totient</option>
+              <option value="rsa-rel">08. RSA Relationships</option>
+              <option value="primality">09. Miller–Rabin</option>
+              <option value="factor">10. Fermat Factorization</option>
+              <option value="cf">11. Continued Fractions</option>
+            </select>
+          </div>
+
+          <!-- Column 2: operation inputs -->
+          <section class="op-panel" aria-label="Operation inputs">
+            <div>
+              <div class="op-panel__rubric">
+                <span id="op-rubric">Operation 01 / Arithmetic</span>
+                <span id="op-index-label">01 / 11</span>
+              </div>
+              <h2 class="op-panel__title" id="op-title">Greatest Common Divisor</h2>
+              <p class="op-panel__desc" id="op-desc">
+                Compute gcd(a, b) by repeated Euclidean division until the remainder vanishes.
+              </p>
+
+              <div class="op-inputs" id="op-inputs">
+                <div class="op-input-grid">
+                  <div class="field">
+                    <label for="in-a">Integer a</label>
+                    <input class="input" id="in-a" type="text" value="240" spellcheck="false" autocomplete="off">
+                  </div>
+                  <div class="field">
+                    <label for="in-b">Integer b</label>
+                    <input class="input" id="in-b" type="text" value="46" spellcheck="false" autocomplete="off">
+                  </div>
+                </div>
+              </div>
+
+              <div class="op-actions">
+                <button class="btn btn-primary" id="btn-run" type="button">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 3l14 9-14 9V3z"/></svg>
+                  Run operation
+                </button>
+                <button class="btn btn-secondary" id="btn-clear" type="button">Clear result</button>
+              </div>
+
+              <div class="result-box" id="result-box" aria-live="polite" hidden>
+                <div class="result-box__head">
+                  <span>Result</span>
+                  <button class="copy-btn" type="button" data-copy="" id="copy-result" disabled>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="1"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/></svg>
+                    <span data-copy-label>Copy</span>
+                  </button>
+                </div>
+                <div class="result-box__value" id="result-value">—</div>
+                <div class="mono-label" id="result-meta" style="margin-top: 6px;">Exact BigInt</div>
+              </div>
+            </div>
+
+            <div class="mono-label" style="border-top: 1px solid var(--rule); padding-top: 12px; line-height: 1.7;">
+              Inputs accept decimal or 0x-prefixed hexadecimal integers. No floating point is used at any stage.
+            </div>
+          </section>
+
+          <!-- Column 3: derivation -->
+          <aside class="derivation-panel" aria-label="Step-by-step derivation">
+            <div class="derivation-panel__head">
+              <span>Step-by-step derivation</span>
+              <span id="deriv-status">Awaiting input</span>
+            </div>
+            <div class="derivation-content" id="deriv-content" aria-live="polite">
+              <div class="derivation-empty">
+                Choose an operation, enter integers, and execute to inspect the exact derivation.
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 — Atlas -->
+    <section id="atlas" class="section" data-spy>
+      <div class="shell">
+        <div class="grid-12" style="align-items: end; margin-bottom: clamp(28px, 4vw, 48px);">
+          <div class="col-7" data-reveal>
+            <div class="eyebrow">§ 02 / Operation Atlas</div>
+            <h2 class="h2" style="margin-top: 14px;">Eleven operations. One exact standard.</h2>
+            <p class="body-copy" style="max-width: 640px; margin-top: 12px;">
+              The toolkit is organized by algebraic role: divisibility, congruence, and the structural relationships that make RSA work — or fail.
+            </p>
+          </div>
+          <div class="col-5" data-reveal data-delay="1">
+            <p class="mono-label" style="text-align: right;">01–03 Arithmetic · 04–06 Modular · 07–11 Structure</p>
+          </div>
+        </div>
+
+        <div class="attack-grid">
+          <article class="attack-card" data-reveal>
+            <div class="attack-card__meta">
+              <span class="attack-card__class">Family 01 / Division</span>
+              <span>3 operations</span>
+            </div>
+            <h3>Arithmetic &amp; Divisibility</h3>
+            <div class="attack-card__formula">gcd(a, b) = a·x + b·y</div>
+            <p>
+              Euclid's algorithm is the spine of the toolkit. It computes the greatest common divisor, the least common multiple, and the Bézout coefficients that certify invertibility.
+            </p>
+            <div style="margin-top: 14px;">
+              <div class="summary-row"><span>01</span><span>GCD (Euclidean)</span></div>
+              <div class="summary-row"><span>02</span><span>LCM</span></div>
+              <div class="summary-row"><span>03</span><span>Extended Euclidean</span></div>
+            </div>
+          </article>
+
+          <article class="attack-card" data-reveal data-delay="1">
+            <div class="attack-card__meta">
+              <span class="attack-card__class">Family 02 / Congruence</span>
+              <span>3 operations</span>
+            </div>
+            <h3>Modular Arithmetic</h3>
+            <div class="attack-card__formula">a·x ≡ 1 (mod m)</div>
+            <p>
+              Inverses, exponentiation, and simultaneous congruences form the working language of RSA. Each operation exposes the intermediate residues rather than hiding them.
+            </p>
+            <div style="margin-top: 14px;">
+              <div class="summary-row"><span>04</span><span>Modular Inverse</span></div>
+              <div class="summary-row"><span>05</span><span>Modular Exponentiation</span></div>
+              <div class="summary-row"><span>06</span><span>Chinese Remainder</span></div>
+            </div>
+          </article>
+
+          <article class="attack-card" data-reveal data-delay="2">
+            <div class="attack-card__meta">
+              <span class="attack-card__class">Family 03 / Structure</span>
+              <span>5 operations</span>
+            </div>
+            <h3>RSA &amp; Factorization</h3>
+            <div class="attack-card__formula">N = p·q &nbsp;·&nbsp; e·d ≡ 1 (mod φ(N))</div>
+            <p>
+              Totient, key relationships, primality, Fermat factorization, and continued fractions connect elementary arithmetic to the security assumptions behind RSA.
+            </p>
+            <div style="margin-top: 14px;">
+              <div class="summary-row"><span>07</span><span>Euler's Totient</span></div>
+              <div class="summary-row"><span>08</span><span>RSA Relationships</span></div>
+              <div class="summary-row"><span>09</span><span>Miller–Rabin</span></div>
+              <div class="summary-row"><span>10</span><span>Fermat Factorization</span></div>
+              <div class="summary-row"><span>11</span><span>Continued Fractions</span></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 — Method -->
+    <section id="method" class="section" data-spy>
+      <div class="shell">
+        <div class="statement-grid">
+          <div class="statement-grid__left" data-reveal>
+            <div class="eyebrow">§ 03 / Exactness Contract</div>
+            <h2 class="statement" style="margin-top: 14px;">No floating point. No hidden rounding.</h2>
+            <div class="formula-card">
+              <div class="formula-card__label">Congruence Criterion</div>
+              <div class="formula-card__math">a ≡ b (mod m) &nbsp;⇔&nbsp; m | (a − b)</div>
+              <p class="formula-card__note">
+                Every operation is evaluated with arbitrary-precision integers. The derivation shows the actual quotients, remainders, residues, and convergents used to reach the result.
+              </p>
+            </div>
+          </div>
+
+          <div class="statement-grid__right" data-reveal data-delay="1">
+            <div class="prose-pair">
+              <p class="dropcap">
+                A cryptographic calculator is only useful if its arithmetic is inspectable. The toolkit therefore refuses shortcuts that obscure the proof: no floating-point square roots, no probabilistic guesses presented as facts, and no result without its intermediate steps.
+              </p>
+              <p>
+                Each operation is a small instrument. The left index selects the algebraic question, the center panel fixes the inputs, and the right panel reconstructs the derivation from the same integers the engine used.
+              </p>
+            </div>
+
+            <dl class="spec-list">
+              <div class="spec-row"><dt>Arithmetic</dt><dd>JavaScript BigInt · exact</dd></div>
+              <div class="spec-row"><dt>Primality</dt><dd>Miller–Rabin + trial division</dd></div>
+              <div class="spec-row"><dt>Factorization</dt><dd>Fermat search + small-factor fallback</dd></div>
+              <div class="spec-row"><dt>Continued fractions</dt><dd>Exact integer recurrence</dd></div>
+              <div class="spec-row"><dt>Output</dt><dd>Result + constructive derivation</dd></div>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <div class="shell">
+        <div class="site-footer__grid">
+          <div class="site-footer__brand-block">
+            <div class="site-footer__brand">RSA-Lab</div>
+            <p class="site-footer__desc">An editorial cryptographic laboratory for prime factorization, modular arithmetic, and key-generation pathology.</p>
+          </div>
+          <div>
+            <div class="site-footer__heading">Navigate</div>
+            <div class="site-footer__links">
+              <a href="index.html">Overview</a>
+              <a href="audit.html">RSA Auditor</a>
+              <a href="keygen.html">Key Generation</a>
+              <a href="toolkit.html">Mathematical Toolkit</a>
+            </div>
+          </div>
+          <div>
+            <div class="site-footer__heading">Project</div>
+            <div class="site-footer__links">
+              <a href="https://github.com" target="_blank" rel="noopener">GitHub Repository</a>
+              <a href="index.html#fragility">Research Notes</a>
+            </div>
+          </div>
+        </div>
+        <div class="site-footer__bottom">
+          <span>RSA-Lab — The Mathematics of Failure</span>
+          <span>Educational and research use only · <span data-year>2026</span></span>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script src="js/main.js"></script>
+  <script src="js/toolkit.js"></script>
 </body>
 </html>

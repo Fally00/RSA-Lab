@@ -1,15 +1,419 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audit</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Firjar:wght@100..800&display=swap');
-    </style>
-    <!-- Audit Page -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audit — RSA-Lab</title>
+  <meta name="description" content="Submit a public key and run Fermat factorization, Wiener's attack, shared-prime GCD, and Pollard p−1 against exact BigInt arithmetic.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem("rsa-lab-theme");
+        var theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.dataset.theme = theme;
+      } catch (e) {}
+      document.documentElement.classList.add("js");
+    })();
+  </script>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
-<body>
-    
+<body class="page-audit has-rail" data-bg="quiet">
+  <a class="skip-link" href="#submit">Skip to content</a>
+  <div class="grain" aria-hidden="true"></div>
+  <canvas id="math-canvas" class="math-canvas" aria-hidden="true"></canvas>
+
+  <header class="masthead">
+    <div class="masthead__inner">
+      <a class="brand" href="index.html" aria-label="RSA-Lab home">
+        <span class="brand__mark" aria-hidden="true"></span>
+        <span>RSA—LAB</span>
+        <span class="brand__suffix">/ Monograph IV</span>
+      </a>
+      <nav class="page-nav" aria-label="Primary">
+        <a href="index.html">Overview</a>
+        <a href="audit.html" aria-current="page">Audit</a>
+        <a href="keygen.html">Keygen</a>
+        <a href="toolkit.html">Toolkit</a>
+      </nav>
+      <div class="masthead__actions">
+        <button class="icon-btn" type="button" data-theme-toggle aria-label="Switch to dark theme" aria-pressed="false">
+          <svg data-theme-icon="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          <svg data-theme-icon="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        </button>
+        <a class="icon-btn masthead__github" href="https://github.com" target="_blank" rel="noopener" aria-label="GitHub repository">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.604-3.369-1.341-3.369-1.341-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0 1 12 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z"/></svg>
+        </a>
+        <a class="btn btn-primary btn-sm masthead__enter" href="keygen.html">
+          Open Keygen
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <button class="icon-btn nav-toggle" type="button" data-mobile-toggle aria-label="Open menu" aria-expanded="false">
+          <svg class="nav-icon-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          <svg class="nav-icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="mobile-menu" data-mobile-menu>
+    <nav class="mobile-menu__pages" aria-label="Primary mobile">
+      <a href="index.html">Overview <span>01</span></a>
+      <a href="audit.html" aria-current="page">Audit <span>02</span></a>
+      <a href="keygen.html">Keygen <span>03</span></a>
+      <a href="toolkit.html">Toolkit <span>04</span></a>
+    </nav>
+    <nav class="mobile-menu__sections" aria-label="Page sections">
+      <a href="#submit">01. Submit</a>
+      <a href="#verdict">02. Verdict</a>
+      <a href="#proof">03. Proof</a>
+    </nav>
+    <a class="btn btn-primary btn-block mobile-menu__cta" href="keygen.html">Open the Keygen</a>
+  </div>
+
+  <nav class="folio-rail" aria-label="Page index">
+    <div class="folio-rail__label">Audit — Folio</div>
+    <ul class="folio-rail__list">
+      <li><a href="#submit">01. Submit</a></li>
+      <li><a href="#verdict">02. Verdict</a></li>
+      <li><a href="#proof">03. Proof</a></li>
+    </ul>
+    <div class="folio-rail__mark" aria-hidden="true"></div>
+  </nav>
+
+  <main class="page-main" id="main">
+    <nav class="subindex" aria-label="Page index">
+      <ul>
+        <li><a href="#submit">01. Submit</a></li>
+        <li><a href="#verdict">02. Verdict</a></li>
+        <li><a href="#proof">03. Proof</a></li>
+      </ul>
+    </nav>
+
+    <div class="shell">
+      <header class="page-head">
+        <div class="page-head__copy">
+          <div class="page-head__rubric">
+            <span>02 / Cryptographic Audit</span>
+            <span class="sep">/</span>
+            <span class="muted">LAB-NODE-04</span>
+          </div>
+          <h1>Public Key Pathology &amp; Factorization</h1>
+          <p>
+            Submit a public key and inspect the verdict. The auditor tests prime proximity, continued fractions, shared factors, and smooth orders, then reconstructs the exact proof.
+          </p>
+        </div>
+        <div class="page-head__aside">
+          <span class="chip" id="engine-chip"><span class="status-dot"></span> BigInt engine ready</span>
+          <span class="chip chip--plain">DER · PEM · exact gcd</span>
+        </div>
+      </header>
+
+      <!-- Submit -->
+      <section id="submit" class="control-bar" data-spy aria-label="Audit controls">
+        <div class="control-bar__groups">
+          <div class="control-group">
+            <span class="control-group__label">Specimen</span>
+            <select class="select" id="specimen-select" aria-label="Specimen library">
+              <option value="wiener">Wiener weak — small d</option>
+              <option value="fermat">Fermat weak — close primes</option>
+              <option value="shared">Shared prime — batch GCD</option>
+              <option value="hardened">Hardened — control specimen</option>
+              <option value="custom">Custom input</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <span class="control-group__label">Input format</span>
+            <div class="segmented" id="mode-group" role="group" aria-label="Input format">
+              <button type="button" data-mode="pem" class="is-active" aria-pressed="true">PEM</button>
+              <button type="button" data-mode="raw" aria-pressed="false">Raw N, e</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-bar__actions">
+          <button class="btn btn-secondary" id="btn-load" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 19V5a1 1 0 0 1 1-1h5l2 3h7a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/></svg>
+            Load specimen
+          </button>
+          <button class="btn btn-primary" id="btn-audit" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 3l8 4v5c0 4.5-3.2 7.8-8 9-4.8-1.2-8-4.5-8-9V7l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
+            Run audit
+          </button>
+          <button class="btn btn-ghost" id="btn-clear" type="button">Clear</button>
+        </div>
+      </section>
+
+      <div class="audit-layout">
+        <!-- Left: key under test -->
+        <aside class="audit-left">
+          <section class="panel audit-input-panel" aria-label="Key under test">
+            <div class="panel__head">
+              <div>
+                <span class="panel__kicker">Key under test</span>
+                <h2 class="panel__title">Subject parameters</h2>
+              </div>
+              <span class="badge" id="input-status">Awaiting key</span>
+            </div>
+            <div class="panel__body">
+              <div class="field" id="pem-field">
+                <label for="key-input">PEM public key</label>
+                <textarea class="textarea" id="key-input" spellcheck="false" autocomplete="off" placeholder="-----BEGIN PUBLIC KEY-----&#10;MIIB...&#10;-----END PUBLIC KEY-----"></textarea>
+              </div>
+
+              <div class="raw-fields" id="raw-fields" hidden>
+                <div class="field">
+                  <label for="raw-n">Modulus N (hex or decimal)</label>
+                  <textarea class="textarea" id="raw-n" spellcheck="false" autocomplete="off" style="min-height: 120px;" placeholder="0x..."></textarea>
+                </div>
+                <div class="field">
+                  <label for="raw-e">Public exponent e</label>
+                  <input class="input" id="raw-e" type="text" value="65537" spellcheck="false" autocomplete="off">
+                </div>
+              </div>
+
+              <div class="validation-bar" id="validation-bar">
+                <div class="validation-bar__state">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+                  <span id="validation-text">Paste a PEM or load a specimen</span>
+                </div>
+                <span id="validation-meta">—</span>
+              </div>
+
+              <div class="fingerprint">
+                <div class="fingerprint__head">
+                  <span id="fingerprint-label">SHA-256 · N‖e</span>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 7V5a1 1 0 0 1 1-1h2M17 4h2a1 1 0 0 1 1 1v2M20 17v2a1 1 0 0 1-1 1h-2M7 20H5a1 1 0 0 1-1-1v-2M8 12h8"/></svg>
+                </div>
+                <div class="fingerprint__value" id="fingerprint-value">—</div>
+                <div class="fingerprint__meta">
+                  <span id="fingerprint-bits">—</span>
+                  <span id="fingerprint-e">—</span>
+                </div>
+              </div>
+
+              <div>
+                <span class="field-label">Specimen library</span>
+                <div class="sample-grid" id="sample-grid" style="margin-top: 6px;">
+                  <button class="sample-btn" type="button" data-sample="wiener">
+                    <span class="sample-btn__label"><span class="status-dot status-dot--danger"></span> Wiener weak</span>
+                    <span class="sample-btn__desc">d = 5 · small private exponent</span>
+                  </button>
+                  <button class="sample-btn" type="button" data-sample="fermat">
+                    <span class="sample-btn__label"><span class="status-dot status-dot--danger"></span> Fermat weak</span>
+                    <span class="sample-btn__desc">|p − q| only 5,550</span>
+                  </button>
+                  <button class="sample-btn" type="button" data-sample="shared">
+                    <span class="sample-btn__label"><span class="status-dot status-dot--danger"></span> Shared prime</span>
+                    <span class="sample-btn__desc">batch GCD collision</span>
+                  </button>
+                  <button class="sample-btn" type="button" data-sample="hardened">
+                    <span class="sample-btn__label"><span class="status-dot status-dot--safe"></span> Hardened</span>
+                    <span class="sample-btn__desc">control specimen · no flaw</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel panel--muted" aria-label="Engine scope">
+            <div class="panel__head">
+              <div>
+                <span class="panel__kicker">Attack coverage</span>
+                <h2 class="panel__title">Engine scope</h2>
+              </div>
+            </div>
+            <div class="panel__body" style="padding-top: 10px; padding-bottom: 10px;">
+              <div class="summary-row"><span>Fermat factorization</span><span>difference of squares</span></div>
+              <div class="summary-row"><span>Wiener's attack</span><span>continued fractions</span></div>
+              <div class="summary-row"><span>Shared-prime GCD</span><span>batch modulus corpus</span></div>
+              <div class="summary-row"><span>Pollard's p − 1</span><span>smooth order search</span></div>
+              <div class="summary-row"><span>Low-exponent root</span><span>requires ciphertext</span></div>
+            </div>
+          </section>
+        </aside>
+
+        <!-- Right: live verdict -->
+        <div class="audit-right">
+          <section id="verdict" class="audit-verdict" data-spy aria-live="polite" aria-label="Audit verdict">
+            <div class="audit-verdict__main">
+              <div class="audit-verdict__icon" id="verdict-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 3l8 4v5c0 4.5-3.2 7.8-8 9-4.8-1.2-8-4.5-8-9V7l8-4z"/><path d="M12 8v4M12 16h.01"/></svg>
+              </div>
+              <div>
+                <div class="audit-verdict__badge-row">
+                  <span class="badge" id="verdict-badge">Not run</span>
+                  <span class="audit-verdict__attack" id="verdict-attack">Awaiting audit</span>
+                </div>
+                <p class="audit-verdict__summary" id="verdict-summary">
+                  Load a specimen or paste a public key, then run the audit engine. The verdict is reconstructed from exact integer arithmetic — no simulated timings.
+                </p>
+              </div>
+            </div>
+            <div class="audit-verdict__timing">
+              <span class="mono-label">Elapsed</span>
+              <span class="audit-verdict__time" id="verdict-time">—</span>
+              <span class="audit-verdict__state" id="verdict-state">IDLE</span>
+            </div>
+          </section>
+
+          <section class="panel" aria-label="Attack matrix">
+            <div class="panel__head">
+              <div>
+                <span class="panel__kicker">Live readout</span>
+                <h2 class="panel__title">Attack matrix</h2>
+              </div>
+              <span class="chip" id="attack-status"><span class="status-dot status-dot--muted"></span> Idle</span>
+            </div>
+            <div class="panel__body" style="padding: 0;">
+              <div class="table-wrap">
+                <table class="attack-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Attack</th>
+                      <th scope="col">Condition</th>
+                      <th scope="col">Result</th>
+                      <th scope="col">Time</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr id="row-fermat">
+                      <td><span class="attack-table__family">Fermat</span></td>
+                      <td class="attack-table__condition">|p − q| small</td>
+                      <td id="res-fermat">—</td>
+                      <td class="attack-table__timing" id="time-fermat">—</td>
+                    </tr>
+                    <tr id="row-wiener">
+                      <td><span class="attack-table__family">Wiener</span></td>
+                      <td class="attack-table__condition">d &lt; ⅓ N<sup>1/4</sup></td>
+                      <td id="res-wiener">—</td>
+                      <td class="attack-table__timing" id="time-wiener">—</td>
+                    </tr>
+                    <tr id="row-shared">
+                      <td><span class="attack-table__family">Shared GCD</span></td>
+                      <td class="attack-table__condition">gcd(N, N₂) &gt; 1</td>
+                      <td id="res-shared">—</td>
+                      <td class="attack-table__timing" id="time-shared">—</td>
+                    </tr>
+                    <tr id="row-pollard">
+                      <td><span class="attack-table__family">Pollard p − 1</span></td>
+                      <td class="attack-table__condition">p − 1 is B-smooth</td>
+                      <td id="res-pollard">—</td>
+                      <td class="attack-table__timing" id="time-pollard">—</td>
+                    </tr>
+                    <tr id="row-lowexp">
+                      <td><span class="attack-table__family">Low exponent</span></td>
+                      <td class="attack-table__condition">m<sup>e</sup> &lt; N · needs c</td>
+                      <td id="res-lowexp">—</td>
+                      <td class="attack-table__timing" id="time-lowexp">—</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel" aria-label="Recovered private key">
+            <div class="panel__head">
+              <div>
+                <span class="panel__kicker">Secrets</span>
+                <h2 class="panel__title">Recovered private key</h2>
+              </div>
+              <span class="badge" id="recovery-badge">Sealed</span>
+            </div>
+            <div class="panel__body">
+              <div class="recovered-grid">
+                <div class="recovered-card is-empty" id="card-p">
+                  <div class="recovered-card__head">
+                    <span>p — prime factor</span>
+                    <button class="copy-btn" type="button" data-copy="" id="copy-p" disabled>Copy</button>
+                  </div>
+                  <div class="recovered-card__value" id="value-p">Not recovered</div>
+                </div>
+                <div class="recovered-card is-empty" id="card-q">
+                  <div class="recovered-card__head">
+                    <span>q — prime factor</span>
+                    <button class="copy-btn" type="button" data-copy="" id="copy-q" disabled>Copy</button>
+                  </div>
+                  <div class="recovered-card__value" id="value-q">Not recovered</div>
+                </div>
+                <div class="recovered-card is-empty" id="card-d">
+                  <div class="recovered-card__head">
+                    <span>d — private exponent</span>
+                    <button class="copy-btn" type="button" data-copy="" id="copy-d" disabled>Copy</button>
+                  </div>
+                  <div class="recovered-card__value" id="value-d">Not recovered</div>
+                </div>
+                <div class="recovered-card is-empty" id="card-phi">
+                  <div class="recovered-card__head">
+                    <span>φ(N) — totient</span>
+                    <button class="copy-btn" type="button" data-copy="" id="copy-phi" disabled>Copy</button>
+                  </div>
+                  <div class="recovered-card__value" id="value-phi">Not recovered</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="proof" class="derivation" data-spy aria-label="Mathematical proof">
+            <button class="derivation__toggle" type="button" data-accordion-toggle aria-controls="derivation-body" aria-expanded="true">
+              <span class="derivation__toggle-main">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 5h16M4 12h10M4 19h16"/><path d="M18 9l3 3-3 3"/></svg>
+                <span>
+                  <span class="derivation__toggle-title">Mathematical proof</span>
+                  <span class="derivation__toggle-sub" id="proof-sub">Awaiting a verdict</span>
+                </span>
+              </span>
+              <svg class="derivation__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+            <div class="derivation__body" id="derivation-body">
+              <div id="derivation-content">
+                <div class="derivation-empty">Run the audit to reconstruct the attack from its intermediate arithmetic.</div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <footer class="site-footer">
+      <div class="shell">
+        <div class="site-footer__grid">
+          <div class="site-footer__brand-block">
+            <div class="site-footer__brand">RSA-Lab</div>
+            <p class="site-footer__desc">An editorial cryptographic laboratory for prime factorization, modular arithmetic, and key-generation pathology.</p>
+          </div>
+          <div>
+            <div class="site-footer__heading">Navigate</div>
+            <div class="site-footer__links">
+              <a href="index.html">Overview</a>
+              <a href="audit.html">RSA Auditor</a>
+              <a href="keygen.html">Key Generation</a>
+              <a href="toolkit.html">Mathematical Toolkit</a>
+            </div>
+          </div>
+          <div>
+            <div class="site-footer__heading">Project</div>
+            <div class="site-footer__links">
+              <a href="https://github.com" target="_blank" rel="noopener">GitHub Repository</a>
+              <a href="index.html#fragility">Research Notes</a>
+            </div>
+          </div>
+        </div>
+        <div class="site-footer__bottom">
+          <span>RSA-Lab — The Mathematics of Failure</span>
+          <span>Educational and research use only · <span data-year>2026</span></span>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <script src="js/samples.js"></script>
+  <script src="js/main.js"></script>
+  <script src="js/audit.js"></script>
 </body>
 </html>
