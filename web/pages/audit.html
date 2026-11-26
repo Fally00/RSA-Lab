@@ -1,33 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=IBM+Plex+Mono&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=IBM+Plex+Mono&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="../style/style.css">
+    <link rel="stylesheet" href="../style/lab.css">
+    <link rel="stylesheet" href="../style/auditStyle.css">
     <title>RSA-Lab | Audit</title>
     <!-- Audit Page -->
 </head>
+
 <body>
     <!-- Start of Header Component -->
-    <header>
-        <p>RSA-Lab</p>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="audit.html" class="focused">Audit</a>
-            <a href="keygen.html">Keygen</a>
-            <a href="toolkit.html">Toolkit</a>
-        </nav>
-        <span>
-            NUMBER THEORY PROJECT
-        </span>
+    <header class="top">
+        <div class="wrap"><a class="logo" href="index.html">RSA-LAB</a>
+            <nav class="nav"><a href="index.html" class="on">Home</a><a href="auditor.html">Audit</a><a
+                    href="keygen.html">Keygen</a><a href="toolkit.html">Toolkit</a></nav><span class="tag">Number Theory
+                Project</span>
+        </div>
     </header>
     <!-- End of Header Component -->
 
     <!-- Start of Main Content -->
-    <main></main>
+    <main>
+        <div class="title-box">
+            <span>TOOLS / AUDIT</span>
+            <h1>How strong is your RSA key?</h1>
+            <p>Inspect public parameters, spot basic weaknesses, and see the reasoning behind each check.</p>
+        </div>
+        <div class="content">
+            <div class="public-key-and-result">
+                <div class="public-key-box">
+                    <div class="public-key-title-box">
+                        <h2>Public key</h2>
+                        <span>Example loaded</span>
+                    </div>
+                    <p>Enter decimal values. Do not paste private key material.</p>
+                    <div class="inputs-box">
+                        <div class="modulus">
+                            <label for="modulusInput">Modulus (n)</label>
+                            <input type="number" name="modulusInput" id="modulusInput">
+                        </div>
+                        <div class="exponent">
+                            <label for="exponentInput">Public exponent (e)</label>
+                            <input type="number" name="exponentInput" id="exponentInput">
+                        </div>
+                    </div>
+                    <div class="buttons-box">
+                        <button id="auditButton">Audit key</button>
+                        <button id="auditResetButton">Reset</button>
+                    </div>
+                </div>
+                <div class="result-box">
+
+                </div>
+            </div>
+            <div class="steps-box">
+
+            </div>
+        </div>
+    </main>
     <!-- End of Main Content -->
 
     <!-- Start of Footer Component -->
@@ -38,4 +76,5 @@
     </footer>
     <!-- End of Footer Component -->
 </body>
+
 </html>

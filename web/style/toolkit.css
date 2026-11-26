@@ -1,0 +1,493 @@
+/*Made by Remas*/
+/* RSA-Lab — Toolkit workspace (3-panel layout). Uses the palette tokens from lab.css; no new colors. */
+.wrap-wide {
+  width: min(1240px, 100% - 48px);
+  margin: 0 auto
+}
+
+.tk-page main {
+  padding: 40px 0 64px
+}
+
+.tk-mono {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--mute);
+  font-weight: 500
+}
+
+.tk-mono.acc {
+  color: var(--accent)
+}
+
+.tk-work {
+  display: grid;
+  grid-template-columns: minmax(210px, 24%) minmax(0, 1fr) minmax(300px, 34%);
+  border: 1px solid var(--edge);
+  background: var(--card);
+  align-items: stretch;
+  min-height: 560px
+}
+
+/* ---- left: operation index ---- */
+.tk-index {
+  border-right: 1px solid var(--edge);
+  background: var(--card);
+  padding-bottom: 18px
+}
+
+.tk-index-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 20px 14px;
+  border-bottom: 1px solid var(--edge)
+}
+
+.tk-cat {
+  padding: 24px 20px 8px
+}
+
+.tk-chip {
+  display: inline-block;
+  padding: 5px 10px;
+  border: 1px solid;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  font-weight: 500;
+  line-height: 1.2
+}
+
+.tk-chip.arith {
+  background: var(--burgundy-main);
+  border-color: var(--burgundy-main);
+  color: var(--beige)
+}
+
+.tk-chip.mod {
+  background: var(--mauve);
+  border-color: var(--mauve);
+  color: var(--ink)
+}
+
+.tk-chip.struct {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--ink)
+}
+
+.tk-chip.fact {
+  background: var(--beige);
+  border-color: var(--burgundy-main);
+  color: var(--burgundy-main)
+}
+
+.tk-index ul {
+  list-style: none
+}
+
+.tk-index button {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  width: 100%;
+  text-align: left;
+  padding: 11px 20px;
+  border-left: 3px solid transparent;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--mute);
+  transition: background .15s, color .15s
+}
+
+.tk-index button i {
+  font-style: normal;
+  color: var(--soft)
+}
+
+.tk-index button:hover {
+  color: var(--ink);
+  background: var(--surface-elevated)
+}
+
+.tk-index button.active {
+  background: var(--surface-elevated);
+  border-left-color: var(--accent);
+  color: var(--ink)
+}
+
+.tk-index button.active i {
+  color: var(--accent)
+}
+
+.tk-index button:focus-visible,
+.tk-btn:focus-visible,
+.tk-copy:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px
+}
+
+/* ---- center: calculator ---- */
+.tk-calc {
+  background: var(--surface-elevated);
+  padding: 28px 30px 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 0
+}
+
+.tk-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px
+}
+
+.tk-title {
+  font-family: "Cormorant Garamond", "Bodoni Moda", Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(2.1rem, 3.4vw, 2.9rem);
+  line-height: 1.05;
+  letter-spacing: -.005em;
+  text-transform: none;
+  margin: 16px 0 14px;
+  color: var(--ink)
+}
+
+.tk-desc {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 1.32rem;
+  line-height: 1.5;
+  color: var(--mute);
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--edge)
+}
+
+.tk-desc code {
+  font-family: var(--mono);
+  font-size: .82em;
+  font-weight: 600;
+  color: var(--ink)
+}
+
+.tk-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px 20px;
+  margin-top: 24px
+}
+
+.tk-fields>:last-child:nth-child(odd) {
+  grid-column: 1/-1
+}
+
+.tk-field label {
+  display: block;
+  margin-bottom: 8px
+}
+
+.tk-field input {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--edge);
+  padding: 12px 14px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink);
+  transition: border-color .15s, box-shadow .15s
+}
+
+.tk-field input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent)
+}
+
+.tk-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 22px;
+  flex-wrap: wrap
+}
+
+.tk-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 22px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  font-weight: 500;
+  border: 1px solid transparent;
+  transition: background .15s, border-color .15s
+}
+
+.tk-btn.run {
+  background: var(--accent);
+  color: var(--beige)
+}
+
+.tk-btn.run:hover {
+  background: var(--ink)
+}
+
+.tk-btn.clear {
+  background: var(--surface-elevated);
+  border-color: var(--edge);
+  color: var(--ink)
+}
+
+.tk-btn.clear:hover {
+  border-color: var(--ink)
+}
+
+.tk-btn svg {
+  width: 11px;
+  height: 11px;
+  flex: none
+}
+
+.tk-result {
+  margin-top: 22px;
+  background: var(--card);
+  border: 1px solid var(--edge);
+  padding: 16px 18px 18px
+}
+
+.tk-result-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center
+}
+
+.tk-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--mute)
+}
+
+.tk-copy:hover {
+  color: var(--ink)
+}
+
+.tk-copy svg {
+  width: 11px;
+  height: 11px
+}
+
+.tk-result-value {
+  font-size: 16px;
+  margin-top: 12px;
+  word-break: break-all;
+  color: var(--ink);
+  line-height: 1.4
+}
+
+.tk-result-cap {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--mute);
+  margin-top: 8px;
+  word-break: break-all
+}
+
+.tk-result.error .tk-result-value {
+  color: var(--accent);
+  font-size: 14px
+}
+
+.tk-note {
+  margin-top: auto;
+  padding: 20px 0 24px;
+  border-top: 1px solid var(--edge)
+}
+
+.tk-note-gap {
+  height: 56px;
+  flex: none
+}
+
+.tk-note .tk-mono {
+  line-height: 1.9
+}
+
+/* ---- right: derivation ---- */
+.tk-deriv {
+  border-left: 1px solid var(--edge);
+  background: var(--card);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  max-height: 820px
+}
+
+.tk-deriv-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 22px 14px 38px;
+  border-bottom: 1px solid var(--edge);
+  flex: none
+}
+
+.tk-deriv-scroll {
+  overflow-y: auto;
+  padding: 4px 22px 24px 38px;
+  flex: 1
+}
+
+.tk-step {
+  border-left: 2px solid var(--gold);
+  padding-left: 14px;
+  margin-top: 16px
+}
+
+.tk-step-label {
+  display: block
+}
+
+.tk-code {
+  background: var(--surface-elevated);
+  border: 1px solid var(--edge);
+  padding: 11px 13px;
+  margin-top: 8px;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: var(--ink)
+}
+
+.tk-code.math {
+  white-space: normal;
+  overflow-x: auto;
+  font-size: 13px
+}
+
+.tk-code .tk-line {
+  padding: 2px 0;
+  white-space: nowrap
+}
+
+.tk-code .tk-line.txt {
+  font-family: var(--mono);
+  font-size: 12px;
+  white-space: pre-wrap
+}
+
+.tk-code mjx-container {
+  font-size: 112% !important;
+  margin: 0 !important
+}
+
+.tk-step-note {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink);
+  margin-top: 10px
+}
+
+.tk-omit {
+  margin-top: 16px;
+  border: 1px dashed var(--edge);
+  padding: 10px;
+  text-align: center
+}
+
+.tk-empty {
+  padding: 48px 4px;
+  text-align: center;
+  line-height: 1.9
+}
+
+@media(max-width:1100px) {
+  .tk-work {
+    grid-template-columns: 230px minmax(0, 1fr)
+  }
+
+  .tk-deriv {
+    grid-column: 1/-1;
+    border-left: 0;
+    border-top: 1px solid var(--edge);
+    max-height: none
+  }
+}
+
+@media(max-width:720px) {
+  .tk-work {
+    grid-template-columns: 1fr
+  }
+
+  .tk-index {
+    border-right: 0;
+    border-bottom: 1px solid var(--edge)
+  }
+
+  .tk-calc {
+    padding: 22px 20px 0
+  }
+
+  .tk-fields {
+    grid-template-columns: 1fr
+  }
+
+  .tk-note-gap {
+    height: 32px
+  }
+}
+
+
+/* ---------- Rounded corners (soft boxes) ---------- */
+.tk-work {
+  border-radius: 20px;
+  overflow: hidden
+}
+
+.tk-chip {
+  border-radius: 999px
+}
+
+.tk-field input {
+  border-radius: 10px
+}
+
+.tk-btn {
+  border-radius: 12px
+}
+
+.tk-result {
+  border-radius: 14px
+}
+
+.tk-code {
+  border-radius: 10px
+}
+
+.tk-omit {
+  border-radius: 10px
+}
+
+.tk-index button {
+  width: calc(100% - 20px);
+  margin: 2px 10px;
+  padding: 11px 12px;
+  border-left: 0;
+  border-radius: 10px
+}
+
+.tk-index button.active {
+  box-shadow: inset 3px 0 0 var(--accent)
+}
+
+.tk-step {
+  border-radius: 2px
+}

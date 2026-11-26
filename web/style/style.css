@@ -10,12 +10,11 @@ body {
     font-family: "Inter", sans-serif;
     display: flex;
     flex-direction: column;
-    opacity: 1;
-    background-image:  linear-gradient(#C5C2B4 1px, transparent 1px), linear-gradient(to right, #C5C2B4 1px, #E3E1D3 1px);
+    background-image: linear-gradient(#c5c2b454 1px, transparent 1px), linear-gradient(to right, #c5c2b454 1px, #E3E1D3 1px);
     background-size: 80px 80px;
 }
 
-body > * {
+body>* {
     padding: 0 120px;
 }
 
@@ -46,7 +45,7 @@ header nav {
 
 header nav a {
     all: unset;
-    padding: 18px 9px;
+    padding: 9px 18px;
     font-weight: 500;
     font-size: 14px;
     line-height: 150%;
@@ -66,8 +65,8 @@ header nav a.focused {
     border-bottom-color: #DD512B;
 }
 
-header > span {
-    padding: 12px 6px;
+header>span {
+    padding: 6px 12px;
     border: 1px solid #C7C3B3;
     font-weight: 600;
     font-size: 10px;
@@ -77,6 +76,20 @@ header > span {
 }
 
 /* End of Header Compontent */
+
+/* Start of Main Element */
+main {
+    padding-top: 44px;
+    padding-bottom: 48px;
+    flex-grow: 1;
+}
+
+main.home {
+    padding-top: 64px;
+    padding-bottom: 48px;
+}
+
+/* End of Main Element */
 
 /* Start of Footer Compontent */
 footer {
@@ -92,10 +105,10 @@ footer {
 }
 
 footer p {
-    font-weight: 400;
     font-size: 12px;
     line-height: 150%;
     letter-spacing: 0;
     color: #636258;
 }
+
 /* End of Footer Compontent */
