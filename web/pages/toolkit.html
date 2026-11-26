@@ -1,15 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Toolkit</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Firjar:wght@100..800&display=swap');
-    </style>
-    <!-- Toolkit Page -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,500&family=Cormorant+Garamond:wght@400;500;600&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="../style/lab.css">
+  <link rel="stylesheet" href="../style/toolkit.css">
+  <title>RSA-Lab — Toolkit</title>
+  <script>window.MathJax = { tex: { inlineMath: [['\\(', '\\)']] }, svg: { fontCache: 'global' } };</script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
 </head>
-<body>
-    
+<!-- Made by Remas -->
+
+<body class="tk-page">
+  <header class="top">
+    <div class="wrap"><a class="logo" href="index.html">RSA-LAB</a>
+      <nav class="nav"><a href="index.html">Home</a><a href="auditor.html">Audit</a><a href="keygen.html">Keygen</a><a
+          href="toolkit.html" class="on">Toolkit</a></nav><span class="tag">Number Theory Project</span>
+    </div>
+  </header>
+  <main>
+    <div class="wrap-wide">
+      <div class="tk-work">
+
+        <!-- Left: operation index -->
+        <nav class="tk-index" aria-label="Operation index">
+          <div class="tk-index-head"><span class="tk-mono">Operation index</span><span class="tk-mono acc">11</span>
+          </div>
+
+          <div class="tk-cat"><span class="tk-chip arith">Arithmetic</span></div>
+          <ul>
+            <li><button type="button" data-op="gcd" class="active"><i>01</i>GCD (Euclidean)</button></li>
+            <li><button type="button" data-op="lcm"><i>02</i>LCM</button></li>
+            <li><button type="button" data-op="egcd"><i>03</i>Extended Euclidean</button></li>
+          </ul>
+
+          <div class="tk-cat"><span class="tk-chip mod">Modular</span></div>
+          <ul>
+            <li><button type="button" data-op="modinv"><i>04</i>Modular Inverse</button></li>
+            <li><button type="button" data-op="modexp"><i>05</i>Modular Exponentiation</button></li>
+            <li><button type="button" data-op="crt"><i>06</i>Chinese Remainder</button></li>
+          </ul>
+
+          <div class="tk-cat"><span class="tk-chip struct">Structure</span></div>
+          <ul>
+            <li><button type="button" data-op="totient"><i>07</i>Euler’s Totient</button></li>
+            <li><button type="button" data-op="rsa"><i>08</i>RSA Relationships</button></li>
+            <li><button type="button" data-op="mr"><i>09</i>Miller-Rabin</button></li>
+          </ul>
+
+          <div class="tk-cat"><span class="tk-chip fact">Factorization</span></div>
+          <ul>
+            <li><button type="button" data-op="fermat"><i>10</i>Fermat Factorization</button></li>
+            <li><button type="button" data-op="cf"><i>11</i>Continued Fractions</button></li>
+          </ul>
+        </nav>
+
+        <!-- Center: calculator -->
+        <section class="tk-calc" aria-labelledby="tk-title">
+          <div class="tk-meta"><span class="tk-mono acc" id="tk-meta-l">Operation 01 / Arithmetic</span><span
+              class="tk-mono" id="tk-meta-r">01 / 11</span></div>
+          <h1 class="tk-title" id="tk-title">Greatest Common Divisor</h1>
+          <p class="tk-desc" id="tk-desc"></p>
+
+          <div class="tk-fields" id="tk-fields"></div>
+
+          <div class="tk-actions">
+            <button type="button" class="tk-btn run" id="tk-run"><svg viewBox="0 0 12 12" fill="none"
+                stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+                <path d="M2.5 1.5v9l7.5-4.5z" />
+              </svg>Run operation</button>
+            <button type="button" class="tk-btn clear" id="tk-clear">Clear result</button>
+          </div>
+
+          <div class="tk-result" id="tk-result" hidden aria-live="polite">
+            <div class="tk-result-head">
+              <span class="tk-mono acc" id="tk-result-label">Result</span>
+              <button type="button" class="tk-copy tk-mono" id="tk-copy"><svg viewBox="0 0 12 12" fill="none"
+                  stroke="currentColor" stroke-width="1" aria-hidden="true">
+                  <rect x="3.5" y="3.5" width="7" height="7" />
+                  <path d="M1.5 8.5v-7h7" />
+                </svg><span>COPY</span></button>
+            </div>
+            <div class="tk-result-value" id="tk-result-value"></div>
+            <div class="tk-result-cap" id="tk-result-cap"></div>
+          </div>
+
+          <div class="tk-note-gap"></div>
+          <div class="tk-note">
+            <p class="tk-mono">Inputs accept decimal or 0x-prefixed hexadecimal integers. No floating point is used at
+              any stage.</p>
+          </div>
+        </section>
+
+        <!-- Right: derivation -->
+        <aside class="tk-deriv" aria-label="Step-by-step derivation">
+          <div class="tk-deriv-head"><span class="tk-mono">Step-by-step derivation</span><span class="tk-mono acc"
+              id="tk-status">IDLE</span></div>
+          <div class="tk-deriv-scroll" id="tk-steps"></div>
+        </aside>
+
+      </div>
+    </div>
+  </main>
+  <footer>
+    <p>Frontend: Abdelrahman, Remas</p>
+    <p>Backend and Logic: Haneen, Jomana, Tamim, Omar Khaled, Omar Tarek, Rayan</p>
+    <p>Deigned by: Figma Ai / Implemented using HTML/CSS/JS/Python</p>
+  </footer>
+  <script src="../js/toolkit.js"></script>
 </body>
+
 </html>

@@ -1,26 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Firjar:wght@100..800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../style/style.css">
-    <title>RSA-Lab</title>
-    <!-- Landing Page -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,500&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../style/lab.css">
+    <title>RSA-Lab — Home</title>
 </head>
+<!-- Made by Remas -->
+
 <body>
-    <!-- Start of Header Compontent -->
-    <header> <!-- Under Construction! -->
-        <h2>RSA-Lab</h2>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="audit.html">Audit</a>
-            <a href="keygen.html">Keygen</a>
-            <a href="toolkit.html">Toolkit</a>
-        </nav>
+    <header class="top">
+        <div class="wrap"><a class="logo" href="index.html">RSA-LAB</a>
+            <nav class="nav"><a href="index.html" class="on">Home</a><a href="auditor.html">Audit</a><a
+                    href="keygen.html">Keygen</a><a href="toolkit.html">Toolkit</a></nav><span class="tag">Number Theory
+                Project</span>
+        </div>
     </header>
-    <!-- End of Header Compontent -->
+    <main>
+        <div class="wrap">
+            <section class="hero">
+                <div>
+                    <p class="eyebrow">A hands-on number theory lab</p>
+                    <h1>Big ideas.<br>Prime numbers.<em>Stronger keys.</em></h1>
+                    <p class="lead">Explore RSA cryptography without the black box. Audit a key, generate a new one, and
+                        follow the mathematics at every step.</p>
+                    <div class="cta"><a class="btn p" href="auditor.html">Audit a key</a><a class="btn s"
+                            href="keygen.html">Generate a key</a></div>
+                </div>
+                <aside class="demo" aria-label="RSA, in three lines">
+                    <header><span>RSA, in three lines</span><span>Learning example</span></header>
+                    <div class="step">
+                        <div class="l"><b>01</b>Choose two primes</div>
+                        <div class="v">p = 61 q = 53</div>
+                    </div>
+                    <div class="step">
+                        <div class="l"><b>02</b>Build the modulus</div>
+                        <div class="v">n = p × q = 3233</div>
+                    </div>
+                    <div class="step">
+                        <div class="l"><b>03</b>Choose a public exponent</div>
+                        <div class="v">e = 17</div>
+                    </div>
+                    <div class="note">Small numbers make the math visible—not secure.</div>
+                </aside>
+            </section>
+            <div class="sec">
+                <h2>Your RSA workspace</h2>
+                <p>One concept. Three places to explore.</p>
+            </div>
+            <div class="cards">
+                <article class="card"><small>01 / Tool</small>
+                    <h3>Audit</h3>
+                    <p>Check key size and public parameters. Understand what makes an RSA key weak.</p><a
+                        href="auditor.html">Open Audit</a>
+                </article>
+                <article class="card"><small>02 / Tool</small>
+                    <h3>Keygen</h3>
+                    <p>Choose a key size and generate an RSA key pair. Follow how the values connect.</p><a
+                        href="keygen.html">Open Keygen</a>
+                </article>
+                <article class="card"><small>03 / Tool</small>
+                    <h3>Toolkit</h3>
+                    <p>Eleven number theory operations, from GCD to Miller–Rabin, each with a step-by-step derivation.
+                    </p><a href="toolkit.html">Open Toolkit</a>
+                </article>
+            </div>
+            <div class="banner"><b>Understand every step.</b><span>Inputs → calculations → results. Each tool has a
+                    dedicated panel for the steps implemented.</span></div>
+        </div>
+    </main>
+    <footer>
+        <p>Frontend: Abdelrahman, Remas</p>
+        <p>Backend and Logic: Haneen, Jomana, Tamim, Omar Khaled, Omar Tarek, Rayan</p>
+        <p>Deigned by: Figma Ai / Implemented using HTML/CSS/JS/Python</p>
+    </footer>
 </body>
+
 </html>
