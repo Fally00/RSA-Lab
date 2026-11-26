@@ -40,7 +40,8 @@ def elapsed_time(start):
 #derive the private key from the public exponent and the factors of n.
 def derive_private_key(e , p , q ):
     try:
-        return pow(e , -1 , math.lcm(p - 1 , q - 1))
+        modulus = p * (p - 1) if p == q else math.lcm(p - 1, q - 1)
+        return pow(e, -1, modulus)
     except ValueError:
         return None
 
@@ -77,10 +78,10 @@ def validate(r):
         if not (
             isinstance(f, (list, tuple))
             and len(f) == 2
-            and all(type(x) is int and x > 1 for x in f)
-            and f[0] != f[1]
+            and all(type(x) is int and x >= 1 for x in f)
+            and f[0] * f[1] > 1
         ):
-            raise ValueError("broken result needs two distinct integer factors > 1")
+            raise ValueError("broken result needs two positive integer factors whose product is > 1")
 
         d = r["private_key"]
         if d is not None and (type(d) is not int or d <= 0):
@@ -96,11 +97,17 @@ def verify_breaking(n , e , r):
     if not r["broken"]:
         return True
     p , q = r["factors"]
-    if p < 2 or q < 2 or p * q != n:
+    if p < 1 or q < 1 or p * q != n:
         return False
     d = r["private_key"]
     if d is not None:
-        return (d * e) % math.lcm(p-1 , q-1) ==1 
+        if p == 1 or q == 1:
+            modulus = max(p, q) - 1
+        elif p == q:
+            modulus = p * (p - 1)
+        else:
+            modulus = math.lcm(p - 1, q - 1)
+        return modulus > 0 and (d * e) % modulus == 1
     return True
 
 def verdict(results):
