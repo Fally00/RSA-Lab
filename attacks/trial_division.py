@@ -4,82 +4,59 @@ Owner: Member 3
 Purpose: W3: try small divisors up to sqrt(n).
 Follows the shared contract: run(n, e) -> dict (see README section 7).
 """
+import time
 from math import isqrt
 
+import config
+from audit.contract import make_result, elapsed_time, derive_private_key, table
 
-def run(n, e, verbose=True):
-    """Trial division attack on a (small) RSA modulus, explained step by step.
 
-    1. Try divisors from 2 up to sqrt(n) and record each step.
-    2. When a divisor d divides n, we have p and q = n // p.
-    3. Compute phi = (p-1)(q-1).
-    4. Compute the private exponent d = e^-1 mod phi.
-    """
+def run(n, e, limit=None):
+    """Trial division attack on an RSA modulus, returning a contract dict."""
+    start = time.perf_counter()
+    max_limit = limit if limit is not None else config.TRAIL_DIVISION_LIMIT
+    bound = min(isqrt(n), max_limit)
 
-    def say(text=""):
-        if verbose:
-            print(text)
+    steps = [
+        f"Divide n by 2, then every odd d up to {bound}. A hit means d | n (W1 divisibility, W3 primes)."
+    ]
+    rows = []
 
-    say("=" * 55)
-    say(" TRIAL DIVISION ATTACK ON RSA")
-    say("=" * 55)
-    say(f"Public key:  n = {n}")
-    say(f"             e = {e}")
-    say()
+    if n % 2 == 0:
+        rows.append(["2", "0"])
+        p, q = 2, n // 2
+    else:
+        rows.append(["2", str(n % 2)])
+        p = q = None
+        candidates = 1
+        for divisor in range(3, bound + 1, 2):
+            rem = n % divisor
+            if len(rows) < 6 or rem == 0:
+                rows.append([str(divisor), str(rem)])
+            candidates += 1
+            if rem == 0:
+                p, q = divisor, n // divisor
+                break
 
-    # ---- Step 1: trial division ----
-    limit = isqrt(n)
-    say("[Step 1] Try to divide n by every number from 2 up to sqrt(n)")
-    say(f"         sqrt(n) is about {limit}, so we try at most {limit - 1} divisors.")
-    say("         (If n = p*q, the smaller factor is always <= sqrt(n).)")
-    say()
+    steps.append(table(["d", "n mod d"], rows))
 
-    steps = []
-    p = q = None
-    for divisor in range(2, limit + 1):
-        found = (n % divisor == 0)
-        steps.append((divisor, found))              # record each step
+    if p is None or p == q or p <= 1 or q <= 1:
+        steps.append(f"No non-trivial divisor found up to {bound}. Smallest prime factor is larger than that.")
+        return make_result("trial_division", 3, broken=False, steps=steps, time_ms=elapsed_time(start))
 
-        # print every attempt for small searches, otherwise only a few
-        if verbose and (limit <= 50 or divisor <= 5 or divisor % 100 == 0 or found):
-            result = "divides n  <-- FOUND!" if found else "no"
-            print(f"         try {divisor:>8}: n % {divisor} = {n % divisor:<8} {result}")
-        if found:
-            p, q = divisor, n // divisor
-            break
+    d = derive_private_key(e, p, q)
+    steps.append(f"d = {p} divides n, so q = n / d = {q}.")
+    steps.append(f"n = {p} x {q}")
 
-    if p is None:
-        say()
-        say("[-] No divisor found: n is prime, or it is not a product of two primes.")
-        return None
-
-    say()
-    say(f"[Step 2] Factors found after {len(steps)} attempts")
-    say(f"         p = {p}")
-    say(f"         q = n / p = {n} / {p} = {q}")
-    say(f"         check: {p} * {q} = {p * q}")
-    say()
-
-    # ---- Step 3: phi ----
-    phi = (p - 1) * (q - 1)
-    say("[Step 3] Compute Euler's totient")
-    say("         phi = (p - 1) * (q - 1)")
-    say(f"         phi = ({p} - 1) * ({q} - 1) = {phi}")
-    say()
-
-    # ---- Step 4: private exponent ----
-    d = pow(e, -1, phi)                             # modular inverse (Python 3.8+)
-    say("[Step 4] Compute the private exponent (modular inverse of e)")
-    say("         d = e^-1 mod phi")
-    say(f"         d = {e}^-1 mod {phi} = {d}")
-    say(f"         check: (d * e) mod phi = {(d * e) % phi}  (must be 1)")
-    say()
-
-    say("[Done]   Private key recovered!")
-    say(f"         Decrypt any ciphertext c with:  m = pow(c, {d}, {n})")
-    say("=" * 55)
-
-    return {"p": p, "q": q, "phi": phi, "d": d, "steps": steps}
+    return make_result(
+        "trial_division",
+        3,
+        broken=True,
+        factors=[p, q],
+        private_key=d,
+        steps=steps,
+        time_ms=elapsed_time(start),
+    )
 
 
 if __name__ == "__main__":
@@ -92,4 +69,5 @@ if __name__ == "__main__":
         raise SystemExit(1)
 
     print()
-    run(n, e)
+    res = run(n, e)
+    print(res)

@@ -4,96 +4,73 @@ Owner: Member 3
 Purpose: W12: Fermat factorization (works when p and q are close).
 Follows the shared contract: run(n, e) -> dict (see README section 7).
 """
-"""
-Fermat's factorization attack on RSA  (attacks/fermat.py)
-
-Idea:
-    If n = p * q and p and q are CLOSE to each other, we can write
-        n = a^2 - b^2 = (a - b)(a + b)      ->   p = a - b,  q = a + b
-    So we search a starting from ceil(sqrt(n)) until  a^2 - n  is a perfect square.
-"""
-
+import time
 from math import isqrt
+
+import config
+from audit.contract import make_result, elapsed_time, derive_private_key, table
 
 
 def is_perfect_square(x):
     """Return (True, root) if x is a perfect square, else (False, None)."""
+    if x < 0:
+        return False, None
     r = isqrt(x)
     return (r * r == x), r
 
 
-def run(n, e, c=None, max_steps=10_000_000):
-    """
-    Fermat attack.
-    n : RSA modulus
-    e : RSA public exponent
-    c : (optional) ciphertext to decrypt
-    """
-    print("\n=== STEP 1: Check the input ===")
-    if n % 2 == 0:
-        print("n is even -> 2 is a factor. Fermat is not needed.")
-        p, q = 2, n // 2
-        a, b, b2 = (p + q) // 2, (q - p) // 2, ((q - p) // 2) ** 2
-    else:
-        print("n is odd -> Fermat's method can be used.")
+def run(n, e, max_steps=None):
+    """Fermat factorization attack returning a contract dict."""
+    start = time.perf_counter()
+    limit = max_steps if max_steps is not None else config.FERMAT_LIMIT
 
-        print("\n=== STEP 2: Start searching ===")
+    steps = [
+        "If p and q are close, n = a^2 - b^2 with a = (p+q)/2 near sqrt(n). Try a = ceil(sqrt n), a+1, ... until a^2 - n is a perfect square (W12)."
+    ]
+    rows = []
+
+    if n % 2 == 0:
+        p, q = 2, n // 2
+        steps.append(f"n is even -> 2 is a factor: n = {p} x {q}")
+    else:
         a = isqrt(n)
         if a * a < n:
-            a += 1                      # a = ceil(sqrt(n))
-        print(f"Starting value: a = ceil(sqrt(n)) = {a}")
-        print("For each a we test if  a^2 - n  is a perfect square.")
+            a += 1
 
-        steps = 0
-        while steps < max_steps:
+        p = q = None
+        for step_idx in range(1, limit + 1):
             b2 = a * a - n
             ok, b = is_perfect_square(b2)
+            if len(rows) < 6 or ok:
+                rows.append([str(step_idx), str(a), str(b2), "yes" if ok else "no"])
             if ok:
+                p, q = a - b, a + b
+                steps.append(table(["iter", "a", "a^2 - n", "square?"], rows))
+                steps.append(f"b = {b}, so p = a - b, q = a + b.")
                 break
             a += 1
-            steps += 1
-            if steps % 100000 == 0:
-                print(f"  ... still searching (tried {steps} values of a)")
-        else:
-            print("\n[-] Attack failed: p and q are probably not close enough.")
-            return None
 
-        print(f"\n[+] Found after {steps + 1} tries!")
-        print(f"    a = {a}")
-        print(f"    b = {b}   (because a^2 - n = {b2} = b^2)")
+        if p is None:
+            steps.append(table(["iter", "a", "a^2 - n", "square?"], rows))
+            steps.append(f"No square found in {limit} iterations: p and q are not close enough.")
+            return make_result("fermat", 12, broken=False, steps=steps, time_ms=elapsed_time(start))
 
-        print("\n=== STEP 3: Get the factors ===")
-        p, q = a - b, a + b
-        print(f"    p = a - b = {p}")
-        print(f"    q = a + b = {q}")
+    if p <= 1 or q <= 1 or p == q or p * q != n:
+        steps.append("Recovered values do not form two distinct factors > 1.")
+        return make_result("fermat", 12, broken=False, steps=steps, time_ms=elapsed_time(start))
 
-    print("\n=== STEP 4: Verify ===")
-    if p * q != n:
-        print("[-] p * q != n  -> something went wrong.")
-        return None
-    print("[+] p * q == n  -> factorization is correct.")
+    d = derive_private_key(e, p, q)
+    steps.append(f"n = {p} x {q}")
 
-    print("\n=== STEP 5: Compute phi and the private key d ===")
-    phi = (p - 1) * (q - 1)
-    print(f"    phi = (p-1)(q-1) = {phi}")
-    try:
-        d = pow(e, -1, phi)             # modular inverse of e mod phi
-    except ValueError:
-        print("[-] e is not invertible mod phi (gcd(e, phi) != 1).")
-        return (p, q, None)
-    print(f"    d = e^-1 mod phi = {d}")
-
-    if c is not None:
-        print("\n=== STEP 6: Decrypt the ciphertext ===")
-        m = pow(c, d, n)
-        print(f"    m = c^d mod n = {m}")
-        try:
-            text = m.to_bytes((m.bit_length() + 7) // 8, "big").decode()
-            print(f"    As text: {text}")
-        except Exception:
-            print("    (m is not readable text, use the number above)")
-
-    return p, q, d
+    return make_result(
+        "fermat",
+        12,
+        broken=True,
+        factors=[p, q],
+        private_key=d,
+        steps=steps,
+        time_ms=elapsed_time(start),
+    )
 
 
 def ask_int(message, optional=False):
@@ -112,21 +89,6 @@ if __name__ == "__main__":
     print("=" * 50)
     print("        Fermat Factorization Attack on RSA")
     print("=" * 50)
-    print("This works when the two primes p and q are close together.")
-    print("Enter your values as decimal numbers.\n")
-
     n = ask_int("Enter n (modulus): ")
     e = ask_int("Enter e (public exponent, usually 65537): ")
-    c = ask_int("Enter c (ciphertext) or press Enter to skip: ", optional=True)
-
-    result = run(n, e, c)
-
-    print("\n" + "=" * 50)
-    if result:
-        p, q, d = result
-        print("RESULT")
-        print(f"p = {p}")
-        print(f"q = {q}")
-        print(f"d = {d}")
-    else:
-        print("No result.")
+    print(run(n, e))

@@ -4,48 +4,11 @@ Owner: Member 4
 Purpose: W5: small-d attack using continued fractions; put the convergents table in steps.
 Follows the shared contract: run(n, e) -> dict (see README section 7).
 """
-"""
-Wiener's Attack on RSA
------------------------
-Recovers the private exponent d (and factors p, q) when e/n has a
-continued-fraction convergent close enough to d's hidden relation:
-
-    e*d = 1 + k*phi(n)   =>   e/n ~ k/d
-
-Steps performed by run(n, e):
-  1. Expand e/n as a continued fraction.
-  2. Generate each convergent k/d from that expansion.
-  3. For each convergent, compute candidate phi(n) = (e*d - 1) / k.
-  4. Solve x^2 - (n - phi(n) + 1)x + n = 0 for p, q and check they are
-     valid integer factors of n.
-
-Usage:
-    python wiener.py
-    (then type n and e when prompted)
-"""
-
+import time
 from math import isqrt
 
-
-def continued_fraction(num, den):
-    """Step 1: expand num/den as a continued fraction -> list of terms."""
-    cf = []
-    while den:
-        q = num // den
-        cf.append(q)
-        num, den = den, num - q * den
-    return cf
-
-
-def convergents(cf):
-    """Step 2: turn continued fraction terms into convergents k/d."""
-    convs = []
-    for i in range(len(cf)):
-        num, den = cf[i], 1
-        for j in range(i - 1, -1, -1):
-            num, den = cf[j] * num + den, num
-        convs.append((num, den))  # (k, d)
-    return convs
+from arith.continued_fractions import cf_expansion_fraction, convergents
+from audit.contract import make_result, elapsed_time, derive_private_key, table
 
 
 def is_perfect_square(x):
@@ -56,84 +19,84 @@ def is_perfect_square(x):
 
 
 def try_candidate(n, e, k, d):
-    """Steps 3-4: build phi(n), solve the quadratic, check p,q are factors."""
-    if k == 0:
-        return None
+    """Build phi(n), solve the quadratic, check p, q are factors."""
+    if k == 0 or d <= 0:
+        return None, False, None, False
 
-    # Step 3: candidate phi(n) = (e*d - 1) / k
     if (e * d - 1) % k != 0:
-        return None
+        return None, False, None, False
     phi = (e * d - 1) // k
     if phi <= 0:
-        return None
+        return None, True, phi, False
 
-    # Step 4: p, q are roots of x^2 - (n - phi + 1)x + n = 0
     b = n - phi + 1
     discriminant = b * b - 4 * n
     is_sq, sqrt_disc = is_perfect_square(discriminant)
     if not is_sq:
-        return None
+        return None, True, phi, False
 
     if (b - sqrt_disc) % 2 != 0:
-        return None
+        return None, True, phi, True
 
     p = (b - sqrt_disc) // 2
     q = (b + sqrt_disc) // 2
 
-    if p * q == n and p > 1 and q > 1:
-        return p, q, d
-    return None
+    if p * q == n and p > 1 and q > 1 and p != q:
+        return (p, q, d), True, phi, True
+    return None, True, phi, True
 
 
 def run(n, e):
-    """
-    Full Wiener attack pipeline:
-      expand e/n -> test each convergent k/d -> compute phi candidate ->
-      solve quadratic for p, q.
-    Prints the convergents table and the result.
-    """
-    print(f"\n[*] Target modulus n = {n}")
-    print(f"[*] Public exponent e = {e}\n")
-
-    print("[Step 1] Expanding e/n as a continued fraction...")
-    cf = continued_fraction(e, n)
-    print(f"    Continued fraction terms: {cf}\n")
-
-    print("[Step 2] Generating convergents k/d...")
+    """Full Wiener attack pipeline returning a contract dict."""
+    start = time.perf_counter()
+    cf = cf_expansion_fraction(e, n)
     convs = convergents(cf)
 
-    print("\n{:<6} {:<25} {:<25}".format("i", "k", "d"))
-    print("-" * 60)
-    for i, (k, d) in enumerate(convs):
-        print("{:<6} {:<25} {:<25}".format(i, k, d))
-    print()
+    cf_preview = str(cf[:8])[:-1] + ", ...]" if len(cf) > 8 else str(cf)
+    steps = [
+        "If d < n^(1/4)/3 then k/d is a convergent of the continued fraction of e/n. For each convergent k/d: phi = (e*d - 1)/k, then solve x^2 - (n - phi + 1)x + n = 0 (W5, W7).",
+        f"Continued fraction of e/n starts {cf_preview}",
+    ]
 
-    print("[Step 3 & 4] Testing each convergent as a candidate (k, d)...")
+    rows = []
+    found = None
     for i, (k, d) in enumerate(convs):
-        result = try_candidate(n, e, k, d)
-        if result:
-            p, q, d_found = result
-            print(f"\n[+] SUCCESS at convergent #{i}: k={k}, d={d}")
-            print(f"[+] Private exponent d = {d_found}")
-            print(f"[+] p = {p}")
-            print(f"[+] q = {q}")
-            return {"d": d_found, "p": p, "q": q}
+        if k == 0:
+            continue
+        res, divisible, phi_cand, disc_sq = try_candidate(n, e, k, d)
+        if len(rows) < 15 or res is not None:
+            rows.append([
+                str(i),
+                f"{k}/{d}",
+                "yes" if divisible else "no",
+                str(phi_cand) if divisible else "-",
+                ("yes" if disc_sq else "no") if divisible else "-",
+            ])
+        if res is not None:
+            found = res
+            break
 
-    print("\n[-] Attack failed: d is not small enough relative to n,")
-    print("    or e/n's convergents did not reveal it (n may be 'safe').")
-    return None
+    steps.append(table(["i", "k/d", "k | e*d-1 ?", "phi candidate", "disc square?"], rows))
+
+    if found is not None:
+        p, q, d_found = found
+        priv = derive_private_key(e, p, q) or d_found
+        steps.append(f"Convergent yields valid phi. n = {p} x {q}")
+        return make_result(
+            "wiener",
+            5,
+            broken=True,
+            factors=[p, q],
+            private_key=priv,
+            steps=steps,
+            time_ms=elapsed_time(start),
+        )
+
+    steps.append("No convergent gives a valid phi. d is not small enough for Wiener.")
+    return make_result("wiener", 5, broken=False, steps=steps, time_ms=elapsed_time(start))
 
 
 if __name__ == "__main__":
-    print("=== Wiener's Attack on RSA ===")
-    print("This recovers a small private key d from a public key (n, e).\n")
-    print("Steps the program will follow:")
-    print("  1. Expand e/n into a continued fraction")
-    print("  2. Build the convergents k/d from that expansion")
-    print("  3. For each convergent, compute a candidate phi(n)")
-    print("  4. Solve the quadratic x^2 - (n - phi + 1)x + n = 0 for p, q")
-    print("  5. Check if p*q == n -> if so, d is the private key\n")
-
     try:
         n = int(input("Enter n (modulus): ").strip())
         e = int(input("Enter e (public exponent): ").strip())
@@ -141,4 +104,4 @@ if __name__ == "__main__":
         print("Invalid input: n and e must be integers.")
         raise SystemExit(1)
 
-    run(n, e)
+    print(run(n, e))

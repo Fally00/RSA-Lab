@@ -25,17 +25,18 @@ def fingerprint_file(path: str) -> str:
     return h.hexdigest()
 
 
-keys = int(input("Enter Keys: "))
-weak = int(input("Enter Weak: "))
+if __name__ == "__main__":
+    keys = int(input("Enter Keys: "))
+    weak = int(input("Enter Weak: "))
 
-report = {
-"keys": keys,
-"weak": weak
-}
+    report = {
+        "keys": keys,
+        "weak": weak,
+    }
 
-result = fingerprint(report)
+    result = fingerprint(report)
 
-print("\nAudit Report:", report)
-print(" Fingerprint:", result)
+    print("\nAudit Report:", report)
+    print(" Fingerprint:", result)
 
 
