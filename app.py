@@ -122,21 +122,25 @@ def _run_toolkit_op(op, body):
 # Flask routes for the web pages.
 
 @app.get("/")
+@app.get("/index.html")
 def index():
     return _page("index")
 
 
 @app.get("/audit")
+@app.get("/audit.html")
 def audit_page():
     return _page("audit")
 
 
 @app.get("/keygen")
+@app.get("/keygen.html")
 def keygen_page():
     return _page("keygen")
 
 
 @app.get("/toolkit")
+@app.get("/toolkit.html")
 def toolkit_page():
     return _page("toolkit")
 
