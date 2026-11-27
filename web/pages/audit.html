@@ -9,9 +9,14 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=IBM+Plex+Mono&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="../style/style.css">
+    <!-- <link rel="stylesheet" href="../style/style.css"> -->
     <link rel="stylesheet" href="../style/lab.css">
     <link rel="stylesheet" href="../style/auditStyle.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
+        rel="stylesheet">
     <title>RSA-Lab | Audit</title>
     <!-- Audit Page -->
 </head>
@@ -20,7 +25,7 @@
     <!-- Start of Header Component -->
     <header class="top">
         <div class="wrap"><a class="logo" href="index.html">RSA-LAB</a>
-            <nav class="nav"><a href="index.html" class="on">Home</a><a href="auditor.html">Audit</a><a
+            <nav class="nav"><a href="index.html">Home</a><a href="audit.html" class="on">Audit</a><a
                     href="keygen.html">Keygen</a><a href="toolkit.html">Toolkit</a></nav><span class="tag">Number Theory
                 Project</span>
         </div>
@@ -30,39 +35,106 @@
     <!-- Start of Main Content -->
     <main>
         <div class="title-box">
-            <span>TOOLS / AUDIT</span>
-            <h1>How strong is your RSA key?</h1>
-            <p>Inspect public parameters, spot basic weaknesses, and see the reasoning behind each check.</p>
+            <span>01 / TOOL · PUBLIC PARAMETER ANALYSIS</span>
+            <h1>RSA Key Audit</h1>
+            <p>Check modulus size and public exponent choices to understand what makes an RSA key weak or vulnerable.
+            </p>
         </div>
         <div class="content">
             <div class="public-key-and-result">
                 <div class="public-key-box">
                     <div class="public-key-title-box">
-                        <h2>Public key</h2>
-                        <span>Example loaded</span>
+                        <p>KEY PARAMETERS</p>
+                        <span>PUBLIC KEY</span>
                     </div>
-                    <p>Enter decimal values. Do not paste private key material.</p>
                     <div class="inputs-box">
                         <div class="modulus">
-                            <label for="modulusInput">Modulus (n)</label>
+                            <label for="modulusInput">MODULUS N</label>
                             <input type="number" name="modulusInput" id="modulusInput">
                         </div>
                         <div class="exponent">
-                            <label for="exponentInput">Public exponent (e)</label>
+                            <label for="exponentInput">PUBLIC EXPONENT E</label>
                             <input type="number" name="exponentInput" id="exponentInput">
                         </div>
                     </div>
                     <div class="buttons-box">
-                        <button id="auditButton">Audit key</button>
-                        <button id="auditResetButton">Reset</button>
+                        <button id="auditButton">RUN AUDIT</button>
+                        <button id="auditResetButton">LOAD SAMPLE</button>
                     </div>
                 </div>
                 <div class="result-box">
-
+                    <div class="result-title-box">
+                        <p>AUDIT VERDICT</p>
+                        <span>12-BIT MODULUS</span>
+                    </div>
+                    <div class="result-result">
+                        <span>WEAK KEY</span>
+                        <p>n = 3233 (12 bits) can be factored immediately. Minimum recommended size is 2048 bits.</p>
+                    </div>
+                    <div class="result-details">
+                        <p>KEY BIT LENGTH</p>
+                        <span>12 bits</span>
+                    </div>
+                    <div class="result-details">
+                        <p>PUBLIC EXPONENT</p>
+                        <span>e = 17 (prime, odd)</span>
+                    </div>
+                    <div class="result-details">
+                        <p>FACTORIZATION STATUS</p>
+                        <span>Trivial (p = 61, q = 53)</span>
+                    </div>
+                    <div class="result-details">
+                        <p>RECOVERED PRIVATE EXPONENT</p>
+                        <span>d = 2753</span>
+                    </div>
                 </div>
             </div>
             <div class="steps-box">
-
+                <div class="steps-box-title-box">
+                    <span>DIAGNOSTIC CHECKS</span>
+                    <span>4 / 4 EVALUATED</span>
+                </div>
+                <div class="check-step">
+                    <span class="check-step-title">
+                        CHECK 01 · BIT LENGTH
+                    </span>
+                    <div class="check-step-result">
+                        log₂(3233) ≈ 11.66 bits
+                    </div>
+                    <p class="check-step-result-details">
+                        Well below the 2048-bit threshold; vulnerable to trial division.
+                    </p>
+                </div>
+                <div class="check-step">
+                    <span class="check-step-title">
+                        CHECK 02 · PUBLIC EXPONENT
+                    </span>
+                    <div class="check-step-result">
+                        gcd(17, φ(3233)) = 1
+                    </div>
+                    <p class="check-step-result-details">
+                        e = 17 is coprime to φ(n) = 3120 and avoids small-exponent root attacks.
+                    </p>
+                </div>
+                <div class="check-step">
+                    <span class="check-step-title">
+                        CHECK 03 · FACTOR PROXIMITY
+                    </span>
+                    <div class="check-step-result">
+                        |p - q| = |61 - 53| = 8
+                    </div>
+                    <p class="check-step-result-details">
+                        Close primes allow Fermat factorization to split n in 1 step.
+                    </p>
+                </div>
+                <div class="check-step">
+                    <span class="check-step-title">
+                        CHECK 04 · PRIVATE KEY RECOVERY
+                    </span>
+                    <div class="check-step-result">
+                        17 · 2753 ≡ 1 (mod 3120)
+                    </div>
+                </div>
             </div>
         </div>
     </main>
