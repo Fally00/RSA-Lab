@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import math
 
-from arith.arith_functions import factorize
+from arith.arith_functions import _factorize as factorize
 
 
 def euler_phi(n: int) -> int:
