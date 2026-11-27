@@ -3,36 +3,39 @@ main {
     display: flex;
     flex-direction: column;
     gap: 28px;
+    padding: 36px 160px 48px;
 }
+
 main .title-box {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
 }
 
 main .title-box span {
-    font-weight: 600;
-    font-size: 11px;
-    line-height: 150%;
-    letter-spacing: 0;
-    color: #B83E20;
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 500;
+    font-size: 10px;
+    line-height: 14px;
+    letter-spacing: 1.2px;
+    color: #7C6671;
 }
 
 main .title-box h1 {
-    font-family: "Bodoni Moda", serif;
-    text-transform: uppercase;
-    font-weight: 500;
-    font-size: 34px;
-    line-height: 150%;
-    letter-spacing: 0;
-    color: #1B1B19;
+    font-family: "Playfair Display", serif;
+    font-weight: 400;
+    font-size: 38px;
+    line-height: 42px;
+    letter-spacing: -0.3px;
+    color: #24141C;
 }
 
 main .title-box p {
+    font-family: "Inter", sans-serif;
     font-size: 15px;
-    line-height: 150%;
+    line-height: 24px;
     letter-spacing: 0;
-    color: #636258;
+    color: #5E4D55;
 }
 
 main .content {
@@ -49,82 +52,94 @@ main .content .public-key-and-result {
     gap: 20px;
 }
 
-main .content .public-key-and-result .public-key-box {
+main .content .public-key-and-result .public-key-box,
+main .content .public-key-and-result .result-box {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    padding: 24px 28px;
-    background-color: #EFEDE3;
-    border: 1px solid #C7C3B3;
+    gap: 18px;
+    padding: 24px;
+    background-color: #FFFDF9;
+    border: 1px solid #E6D9C7;
+    border-radius: 14px;
+    box-shadow: 0 8px 24px 0 #24141c0d;
 }
 
-main .content .public-key-and-result .public-key-box .public-key-title-box {
+main .content .public-key-and-result .public-key-box .public-key-title-box,
+main .content .public-key-and-result .result-box .result-title-box {
     flex-grow: 1;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-main .content .public-key-and-result .public-key-box .public-key-title-box h2 {
-    font-family: "Bodoni Moda", serif;
+main .content .public-key-and-result .public-key-box .public-key-title-box p,
+main .content .public-key-and-result .result-box .result-title-box p {
+    font-family: "JetBrains Mono", monospace;
     font-weight: 500;
-    font-size: 18px;
-    line-height: 150%;
-    letter-spacing: 0;
-    color: #1B1B19;
+    font-size: 10px;
+    line-height: 14px;
+    letter-spacing: 1.2px;
+    color: #7C6671;
 }
+
+/*******/
 
 main .content .public-key-and-result .public-key-box .public-key-title-box span {
+    font-family: "JetBrains Mono", monospace;
     padding: 4px 10px;
-    background-color: #E9DFD0;
-    font-weight: 600;
-    font-size: 11px;
-    line-height: 150%;
-    letter-spacing: 0;
-    color: #B83E20;
+    background-color: #6D123F;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 9px;
+    line-height: 12px;
+    letter-spacing: 1.1px;
+    color: #FCF7EF;
 }
 
-main .content .public-key-and-result .public-key-box p {
+/* main .content .public-key-and-result .public-key-box p {
     font-size: 13px;
     line-height: 150%;
     letter-spacing: 0;
     color: #636258;
-}
+} */
 
 main .content .public-key-and-result .public-key-box .inputs-box {
     display: flex;
-    gap: 16px;
+    gap: 14px;
 }
 
-main .content .public-key-and-result .public-key-box .inputs-box > div {
+main .content .public-key-and-result .public-key-box .inputs-box>div {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
 }
 
 main .content .public-key-and-result .public-key-box .inputs-box label {
+    font-family: "JetBrains Mono", monospace;
     font-weight: 500;
-    font-size: 12px;
-    line-height: 150%;
-    letter-spacing: 0;
-    color: #1B1B19;
+    font-size: 10px;
+    line-height: 14px;
+    letter-spacing: 1.2px;
+    color: #7C6671;
 }
 
 main .content .public-key-and-result .public-key-box .inputs-box input {
     all: unset;
-    padding: 11px 14px;
-    background-color: #E6E3D7;
-    border: 1px solid #C7C3B3;
-    font-family: "IBM Plex Mono", monospace;
-    font-size: 15px;
-    line-height: 150%;
+    padding: 10px 14px;
+    background-color: #F5E9D8;
+    border: 1px solid #E6D9C7;
+    border-radius: 8px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 13px;
+    line-height: 18px;
     letter-spacing: 0;
-    color: #1B1B19;
+    font-weight: 500;
+    color: #24141C;
     cursor: pointer;
 }
 
 main .content .public-key-and-result .public-key-box .inputs-box .modulus {
-    flex-grow: 2;
+    flex-grow: 1;
 }
 
 main .content .public-key-and-result .public-key-box .inputs-box .exponent {
@@ -134,33 +149,185 @@ main .content .public-key-and-result .public-key-box .inputs-box .exponent {
 main .content .public-key-and-result .public-key-box .buttons-box {
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 12px;
 }
 
 main .content .public-key-and-result .public-key-box .buttons-box #auditButton {
     all: unset;
     cursor: pointer;
-    padding: 11px 20px;
-    background-color: #55534D;
+    font-family: "JetBrains Mono", monospace;
+    padding: 11px 18px;
+    border-radius: 8px;
+    background-color: #6D123F;
     font-weight: 500;
-    font-size: 14px;
-    line-height: 150%;
-    letter-spacing: 0;
-    color: #EFEDE3;
+    font-size: 11px;
+    line-height: 14px;
+    letter-spacing: 1.1px;
+    color: #FCF7EF;
+    border: 1px solid transparent;
 }
 
 main .content .public-key-and-result .public-key-box .buttons-box #auditResetButton {
     all: unset;
     cursor: pointer;
+    font-family: "JetBrains Mono", monospace;
+    padding: 11px 18px;
+    background-color: #FFFDF9;
+    border: 1px solid #E6D9C7;
     font-weight: 500;
-    font-size: 13px;
-    line-height: 150%;
-    letter-spacing: 0;
-    color: #636258;
+    font-size: 11px;
+    line-height: 14px;
+    letter-spacing: 1.1px;
+    color: #5E4D55;
+    border-radius: 8px;
 }
 
 main .content .steps-box {
     flex-grow: 1;
+}
+
+main .content .public-key-and-result .result-box {
+    gap: 14px;
+}
+
+main .content .public-key-and-result .result-box .result-title-box span {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 500;
+    font-size: 10px;
+    line-height: 14px;
+    letter-spacing: 1.2px;
+    color: #6D123F;
+}
+
+main .content .public-key-and-result .result-box .result-result {
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-radius: 8px;
+    background-color: #F5E9D8;
+    border: 1px solid #6D123F;
+}
+
+main .content .public-key-and-result .result-box .result-result span {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background-color: #6D123F;
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 700;
+    font-size: 9px;
+    line-height: 12px;
+    letter-spacing: 1.1px;
+    color: #FCF7EF;
+}
+
+main .content .public-key-and-result .result-box .result-result p {
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    line-height: 20px;
+    letter-spacing: 0;
+    color: #24141C;
+}
+
+main .content .public-key-and-result .result-box .result-details {
+    padding-bottom: 14px;
+    border-bottom: 1px solid #F2E9DD;
+    display: flex;
+    justify-content: space-between;
+}
+
+main .content .public-key-and-result .result-box .result-details:last-child {
+    border-color: transparent;
+    padding-bottom: 0;
+}
+
+main .content .public-key-and-result .result-box .result-details p {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 14px;
+    letter-spacing: 1.2px;
+    color: #7C6671;
+}
+
+main .content .public-key-and-result .result-box .result-details span {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 18px;
+    letter-spacing: 0;
+    color: #24141C;
+}
+
+main .content .public-key-and-result .result-box .result-details:nth-child(odd) span {
+    color: #6D123F;
+}
+
+/**************************/
+main .content .steps-box {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 24px;
+    background-color: #FFFDF9;
+    border: 1px solid #E6D9C7;
+    border-radius: 14px;
+    box-shadow: 0 8px 24px 0 #24141c0d;
+}
+
+main .content .steps-box .steps-box-title-box {
+    padding-bottom: 14px;
+    border-bottom: 1px solid #F2E9DD;
+    display: flex;
+    justify-content: space-between;
+}
+
+main .content .steps-box .steps-box-title-box span {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 500;
+    font-size: 10px;
+    line-height: 14px;
+    letter-spacing: 1.2px;
+    color: #7C6671;
+}
+
+main .content .steps-box .check-step {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+main .content .steps-box .check-step .check-step-title {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 500;
+    font-size: 10px;
+    line-height: 14px;
+    letter-spacing: 1.2px;
+    color: #7C6671;
+}
+
+main .content .steps-box .check-step .check-step-result {
+    padding: 12px 14px;
+    border-radius: 8px;
+    background-color: #F5E9D8;
+    border: 1px solid #E6D9C7;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 15px;
+    line-height: 22px;
+    letter-spacing: 0;
+    color: #24141C;
+}
+
+main .content .steps-box .check-step:last-child .check-step-result {
+    border-color: #6D123F;
+}
+
+main .content .steps-box .check-step .check-step-result-details {
+    font-family: "Inter", sans-serif;
+    font-size: 13px;
+    line-height: 20px;
+    letter-spacing: 0;
+    color: #5E4D55;
 }
 
 /* End of Main Element */
