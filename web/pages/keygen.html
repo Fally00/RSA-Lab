@@ -6,17 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=IBM+Plex+Mono&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-        rel="stylesheet">
-    <!-- <link rel="stylesheet" href="../style/style.css"> -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../style/lab.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
-        rel="stylesheet">
+    <link rel="stylesheet" href="../style/keygenStyle.css">
     <title>RSA-Lab | Keygen</title>
+    <script src="../js/keygen.js" defer></script>
     <!-- Keygen Page -->
 </head>
 
@@ -32,7 +26,132 @@
     <!-- End of Header Component -->
 
     <!-- Start of Main Content -->
-    <main></main>
+    <main>
+        <div class="title-box">
+            <span>01 / TOOL · PUBLIC PARAMETER ANALYSIS</span>
+            <h1>RSA Key Audit</h1>
+            <p>Check modulus size and public exponent choices to understand what makes an RSA key weak or vulnerable.
+            </p>
+        </div>
+        <div class="content">
+            <div class="generation-and-result">
+                <div class="generation-box">
+                    <div class="generation-title-box">
+                        <p>GENERATION SETTINGS</p>
+                        <span>LEARNING SIZE</span>
+                    </div>
+                    <div class="inputs-box">
+                        <div class="radio-input">
+                            <span>KEY BIT SIZE</span>
+                            <div class="radios">
+                                <div id="bit12">12-BIT</div>
+                                <div id="bit32">32-BIT</div>
+                                <div id="bit64">64-BIT</div>
+                                <div id="bit512">512-BIT</div>
+                                <div id="bit1024">1024-BIT</div>
+                            </div>
+                        </div>
+                        <div class="inputs">
+                            <div class="exponent">
+                                <label for="exponentInput">PUBLIC EXPONENT E</label>
+                                <input type="text" name="exponentInput" id="exponentInput">
+                            </div>
+                            <div class="seed">
+                                <label for="seedInput">PRIME SEED (P, Q)</label>
+                                <input type="text" name="seedInput" id="seedInput">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="buttons-box">
+                        <button id="generateButton">GENERATE KEY PAIR</button>
+                        <button id="generateResetButton">NEW PRIMES</button>
+                    </div>
+                </div>
+                <!--  -->
+                <div class="result-box">
+                    <div class="result-title-box">
+                        <p>GENERATED KEY PAIR</p>
+                        <span>VALID · 12-BIT RSA</span>
+                    </div>
+                    <div class="result-result">
+                        <div class="public-key">
+                            <span>PUBLIC KEY (N, E)</span>
+                            <p>(3233, 17)</p>
+                        </div>
+                        <div class="private-key">
+                            <span>PRIVATE KEY (N, D)</span>
+                            <p>(3233, 2753)</p>
+                        </div>
+                    </div>
+                    <div class="result-details">
+                        <p>PRIMES (P, Q)</p>
+                        <span>p = 61, q = 53</span>
+                    </div>
+                    <div class="result-details">
+                        <p>MODULUS (N = P · Q)</p>
+                        <span>3233</span>
+                    </div>
+                    <div class="result-details">
+                        <p>FACTORIZATION STATUS</p>
+                        <span>Trivial (p = 61, q = 53)</span>
+                    </div>
+                    <div class="result-details">
+                        <p>EULER'S TOTIENT Φ(N)</p>
+                        <span>3120</span>
+                    </div>
+                </div>
+            </div>
+            <div class="steps-box">
+                <div class="steps-box-title-box">
+                    <span>CONSTRUCTION DERIVATION</span>
+                    <span>5 STEPS</span>
+                </div>
+                <div class="step">
+                    <span class="step-title">
+                        STEP 01 · SAMPLE PRIMES
+                    </span>
+                    <div class="step-result">
+                        p = 61,  q = 53
+                    </div>
+                    <p class="step-result-details">
+                        Two distinct primes verified via Miller-Rabin primality check.
+                    </p>
+                </div>
+                <div class="step">
+                    <span class="step-title">
+                        STEP 02 · COMPUTE MODULUS
+                    </span>
+                    <div class="step-result">
+                        n = 61 · 53 = 3233
+                    </div>
+                </div>
+                <div class="step">
+                    <span class="step-title">
+                        STEP 03 · EULER'S TOTIENT
+                    </span>
+                    <div class="step-result">
+                        φ(n) = (61 - 1)(53 - 1) = 3120
+                    </div>
+                </div>
+                <div class="step">
+                    <span class="step-title">
+                        CHECK 04 · PRIVATE KEY RECOVERY
+                    </span>
+                    <div class="step-result">
+                        e = 17,  gcd(17, 3120) = 1
+                    </div>
+                </div>
+                <div class="step">
+                    <span class="step-title">
+                        STEP 05 · MODULAR INVERSE
+                    </span>
+                    <div class="step-result">
+                        d = 17⁻¹ mod 3120 = 2753
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
     <!-- End of Main Content -->
 
     <!-- Start of Footer Component -->

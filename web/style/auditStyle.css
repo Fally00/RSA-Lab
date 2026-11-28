@@ -167,7 +167,7 @@ main .content .public-key-and-result .public-key-box .buttons-box #auditButton {
     border: 1px solid transparent;
 }
 
-main .content .public-key-and-result .public-key-box .buttons-box #auditResetButton {
+/* main .content .public-key-and-result .public-key-box .buttons-box #auditResetButton {
     all: unset;
     cursor: pointer;
     font-family: "JetBrains Mono", monospace;
@@ -180,7 +180,7 @@ main .content .public-key-and-result .public-key-box .buttons-box #auditResetBut
     letter-spacing: 1.1px;
     color: #5E4D55;
     border-radius: 8px;
-}
+} */
 
 main .content .steps-box {
     flex-grow: 1;

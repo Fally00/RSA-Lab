@@ -6,18 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=IBM+Plex+Mono&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
-        rel="stylesheet">
-    <!-- <link rel="stylesheet" href="../style/style.css"> -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../style/lab.css">
     <link rel="stylesheet" href="../style/auditStyle.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap"
-        rel="stylesheet">
     <title>RSA-Lab | Audit</title>
+    <script src="../js/audit.js" defer></script>
     <!-- Audit Page -->
 </head>
 
@@ -50,16 +43,15 @@
                     <div class="inputs-box">
                         <div class="modulus">
                             <label for="modulusInput">MODULUS N</label>
-                            <input type="number" name="modulusInput" id="modulusInput">
+                            <input type="text" name="modulusInput" id="modulusInput">
                         </div>
                         <div class="exponent">
                             <label for="exponentInput">PUBLIC EXPONENT E</label>
-                            <input type="number" name="exponentInput" id="exponentInput">
+                            <input type="text" name="exponentInput" id="exponentInput">
                         </div>
                     </div>
                     <div class="buttons-box">
                         <button id="auditButton">RUN AUDIT</button>
-                        <button id="auditResetButton">LOAD SAMPLE</button>
                     </div>
                 </div>
                 <div class="result-box">
