@@ -17,8 +17,8 @@ def validate_bits(bits, minimum=16):
     if bits < minimum:
         raise ValueError(f"bits must be at least {minimum}.")
 
-def generate_prime(bits):
-    validate_bits(bits)
+def generate_prime(bits, minimum=16):
+    validate_bits(bits, minimum=minimum)
 
     while True:
         candidate = secrets.randbits(bits)
@@ -28,19 +28,39 @@ def generate_prime(bits):
         if miller_rabin(candidate)["is_probable_prime"]:
             return candidate
 
-def generate_strong_key(bits=1024):
-    validate_bits(bits, minimum=32)
+def generate_strong_key(bits=1024, e=None, seed=None):
+    validate_bits(bits, minimum=12)
 
     if bits % 2 != 0:
         raise ValueError("bits must be an even number.")
 
-    e = 65537
     prime_bits = bits // 2
     min_distance = 1 << max(0, prime_bits - 100)
 
+    if e is None:
+        e = 17 if bits <= 16 else 65537
+    if isinstance(e, bool) or not isinstance(e, int) or e <= 1:
+        raise ValueError("e must be an integer greater than 1.")
+
+    if seed is not None:
+        if not isinstance(seed, (tuple, list)) or len(seed) != 2:
+            raise ValueError("seed must contain two prime values (p, q).")
+        p, q = seed
+        if any(isinstance(value, bool) or not isinstance(value, int) for value in (p, q)):
+            raise ValueError("seed values p and q must be integers.")
+        if p == q or not all(miller_rabin(value)["is_probable_prime"] for value in (p, q)):
+            raise ValueError("seed values must be distinct primes.")
+        if (p * q).bit_length() != bits:
+            raise ValueError(f"seed primes must produce a {bits}-bit modulus.")
+        phi = (p - 1) * (q - 1)
+        if e >= phi or gcd(e, phi) != 1:
+            raise ValueError("e must be less than phi(n) and coprime to it.")
+        d = modinv(e, phi)
+        return _key_result(p, q, bits, e, d, phi)
+
     while True:
-        p = generate_prime(prime_bits)
-        q = generate_prime(prime_bits)
+        p = generate_prime(prime_bits, minimum=max(2, min(16, prime_bits)))
+        q = generate_prime(prime_bits, minimum=max(2, min(16, prime_bits)))
 
         if p == q:
             continue
@@ -55,19 +75,32 @@ def generate_strong_key(bits=1024):
 
         phi = (p - 1) * (q - 1)
 
-        if gcd(e, phi) != 1:
+        if e >= phi or gcd(e, phi) != 1:
             continue
 
         d = modinv(e, phi)
         break
 
+    return _key_result(p, q, bits, e, d, phi)
+
+
+def _key_result(p, q, bits, e, d, phi):
+    n = p * q
     return {
         "n": n,
         "e": e,
         "d": d,
         "p": p,
         "q": q,
-        "bits": bits
+        "bits": bits,
+        "phi": phi,
+        "steps": [
+            f"Choose distinct primes p = {p} and q = {q}.",
+            f"Compute n = p × q = {n}.",
+            f"Compute phi(n) = (p - 1)(q - 1) = {phi}.",
+            f"Check gcd(e, phi(n)) = gcd({e}, {phi}) = 1.",
+            f"Compute d = e⁻¹ mod phi(n) = {d}.",
+        ],
     }
 
 def generate_weak_key(bits=1024, kind="small_primes"):

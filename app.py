@@ -174,6 +174,19 @@ def api_keygen():
             or not config.MIN_KEY_BITS <= bits <= config.MAX_KEY_BITS:
         return _error(f"bits must be an integer from {config.MIN_KEY_BITS} to {config.MAX_KEY_BITS}.")
 
+    exponent = body.get("exponent")
+    try:
+        exponent = int(exponent) if exponent not in (None, "") else None
+        seed_text = body.get("seed", "")
+        seed = None
+        if seed_text:
+            values = [int(value.strip()) for value in seed_text.split(",")]
+            if len(values) != 2:
+                raise ValueError("seed must be two comma-separated primes: p, q.")
+            seed = values
+    except (TypeError, ValueError):
+        return _error("Enter a valid exponent and optional seed as p, q.")
+
     if config.USE_MOCK:
         return jsonify(_mock()["keygen"])
 
@@ -185,7 +198,7 @@ def api_keygen():
             if isinstance(weak, tuple):
                 return jsonify({"weak": [_stringify_key(k) for k in weak]})
             return jsonify({"weak": _stringify_key(weak)})
-        strong = generate_strong_key(bits=bits)
+        strong = generate_strong_key(bits=bits, e=exponent, seed=seed)
         return jsonify({"strong": _stringify_key(strong)})
     except ValueError as exc:
         return _error(str(exc), 400)

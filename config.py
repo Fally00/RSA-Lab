@@ -15,7 +15,7 @@ DEBUG = True
 
 #Data Source settings
 
-USE_MOCK = True 
+USE_MOCK = False
 MOCK_PATH = os.path.join(BASE_DIR, "docs" , "mock_results.json")
 
 #Input settings
@@ -27,7 +27,7 @@ MAX_MODULUS = 8192
 #Key generation settings
 
 DEFAULT_KEY_BITS = 1024
-MIN_KEY_BITS = 64
+MIN_KEY_BITS = 12
 MAX_KEY_BITS = 2048
 PUBLIC_EXPONENT = 65537
 
